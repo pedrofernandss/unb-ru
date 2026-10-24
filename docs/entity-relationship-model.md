@@ -8,7 +8,7 @@ alunos, campi, restaurantes, refeições, cartões, transações financeiras e o
 às catracas. Este documento descreve as entidades representadas no modelo
 entidade-relacionamento e seus principais relacionamentos.
 
-![Modelo Entidade-Relacionamento](image.png)
+![Modelo Entidade-Relacionamento](Sprint1BMER_.jpg)
 
 ## Entidades principais
 
@@ -27,7 +27,7 @@ deve estar associado a uma universidade.
 - **Nome**: Nome do campus.
 
 **Relacionamento:** Cada campus pertence a uma universidade. Um campus pode
-possuir um e somente um restaurante.
+possuir nenhum ou apenas um restaurante.
 
 ### 3. Restaurante
 
@@ -36,7 +36,8 @@ possuir um e somente um restaurante.
   localizado.
 
 **Relacionamentos:** Cada restaurante pertence a um campus, está associado a
-uma ou várias catracas e pode oferecer uma ou várias refeições. Um restaurante
+uma ou várias catracas e pode estar associado a nenhuma ou várias ocorrências
+de refeição (refeição realizada em um determinado dia). Um restaurante
 também pode estar associado a nenhuma ou várias transações e inscrições
 FastPass.
 
@@ -47,20 +48,23 @@ FastPass.
 - **Saldo**: Saldo financeiro disponível para utilização no restaurante.
 
 **Relacionamentos:** Um aluno pode possuir nenhum ou vários cartões, realizar
-nenhuma ou várias transações, fazer nenhuma ou várias inscrições FastPass e
-possuir nenhum ou vários registros de acesso no histórico das catracas.
+nenhuma ou várias transações, fazer nenhuma ou uma inscrição FastPass para um
+determinado dia e refeição, e possuir nenhum ou vários registros de acesso
+no histórico das catracas.
 
 ### 5. Funcionário
 
 - **Matrícula**: Identificador único do funcionário (chave primária).
 - **Nome**: Nome completo do funcionário.
 
-**Relacionamento:** Um funcionário pode estar associado a nenhuma ou várias
-catracas. Cada catraca deve estar associada a um funcionário.
+**Relacionamento:** Um funcionário pode estar associado a nenhuma ou a uma
+catraca. Cada catraca deve estar associada a um funcionário.
 
 ### 6. Cartão
 
-- **Número**: Número identificador do cartão (chave primária).
+- **Aluno ID**: Chave estrangeira referente à matrícula do aluno.
+- **Número**: Número identificador do cartão (chave primária e
+  composta com a matrícula do aluno).
 - **Bandeira**: Bandeira ou operadora do cartão.
 - **Nome**: Nome do titular do cartão.
 - **Saldo**: Saldo disponível no cartão.
@@ -68,12 +72,13 @@ catracas. Cada catraca deve estar associada a um funcionário.
 - **Código de verificação**: Código de segurança do cartão.
 
 **Relacionamento:** Um aluno pode possuir nenhum ou vários cartões. Cada cartão
-deve estar associado a um aluno.
+deve estar associado a um e somente um aluno.
 
 ### 7. Catraca
 
 - **Restaurante ID**: Chave estrangeira associada ao restaurante.
-- **Funcionário ID**: Chave estrangeira associada ao funcionário.
+- **Funcionário Responsável ID**: Chave estrangeira associada ao funcionário
+  responsável pela catraca.
 - **Número**: Número identificador da catraca.
 - **Piso**: Piso onde a catraca está instalada.
 
@@ -146,12 +151,12 @@ registros de acesso.
 
 - Uma **universidade** possui um ou vários **campi**, e cada campus pertence a
   uma universidade.
-- Um **campus** possui um ou vários **restaurantes**, e cada restaurante
+- Um **campus** possui nenhum ou um **restaurante**, e cada restaurante
   pertence a um campus.
-- Um **restaurante** possui uma ou várias **catracas** e oferece uma ou várias
+- Um **restaurante** possui uma ou várias **catracas** e oferece nenhuma ou várias
   **refeições**.
 - Uma **catraca** pertence a um restaurante e está associada a um funcionário;
-  um funcionário pode estar associado a nenhuma ou várias catracas.
+  um funcionário pode estar associado a nenhuma ou uma catraca.
 - Um **tipo de refeição** classifica várias refeições, enquanto cada refeição
   possui um único tipo.
 - **Transação**, **Inscrição FastPass** e **Histórico Catraca** são entidades
