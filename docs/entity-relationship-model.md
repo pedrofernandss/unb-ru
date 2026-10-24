@@ -27,7 +27,7 @@ deve estar associado a uma universidade.
 - **Nome**: Nome do campus.
 
 **Relacionamento:** Cada campus pertence a uma universidade. Um campus pode
-possuir um ou vários restaurantes.
+possuir um e somente um restaurante.
 
 ### 3. Restaurante
 
