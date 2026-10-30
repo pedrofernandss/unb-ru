@@ -1,0 +1,6 @@
+# Matrícula diferente das usadas nas features (ex: "261234567"), pois os fixtures
+# ficam gravados no banco de teste, que também é usado pelo Cucumber.
+genaina:
+  nome: Professora Genaina
+  matricula: "1984201"
+  password_digest: <%= BCrypt::Password.create("senha123", cost: 4) %>
