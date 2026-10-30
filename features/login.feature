@@ -28,4 +28,4 @@ Funcionalidade: Login de Usuário
     E eu preencho o campo "Senha" com "senha123"
     E eu clico no botão "Entrar"
     Então eu devo permanecer na página de login
-    E eu devo ver a mensagem "E-mail ou senha inválidos."
+    E eu devo ver a mensagem "Matrícula ou senha inválidos."

@@ -33,8 +33,10 @@ module Authentication
   end
 
   def start_new_session_for(user)
-    reset_session
+    destino = session[:return_to_after_authenticating]
+    reset_session # evita fixação de sessão
     session[:user_id] = user.id
+    session[:return_to_after_authenticating] = destino if destino
     Current.user = user
   end
 
@@ -44,6 +46,15 @@ module Authentication
   end
 
   def after_authentication_url
-    session.delete(:return_to_after_authenticating) || home_path
+    session.delete(:return_to_after_authenticating) || pagina_inicial_de(current_user)
+  end
+
+  # Para onde cada perfil vai após o login (rotas mapeadas no spike em docs/).
+  def pagina_inicial_de(usuario)
+    case usuario.perfil
+    when "funcionario" then configuracao_de_ponto_path
+    when "administrador" then admin_restaurantes_path
+    else home_path
+    end
   end
 end

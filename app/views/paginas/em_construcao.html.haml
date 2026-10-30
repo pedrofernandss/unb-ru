@@ -1,0 +1,13 @@
+- content_for :title, "#{@area} · RU UnB"
+
+%section.card.painel
+  %p.sobretitulo
+    = icon :info
+    = @area
+  %h2.painel__titulo Área em construção
+  %p.painel__descricao
+    Olá, #{current_user.nome}. Você entrou como #{current_user.perfil}, mas as telas
+    desta área ainda estão sendo desenvolvidas.
+  = button_to logout_path, method: :delete, class: "botao botao--secundario botao--largo" do
+    = icon :log_out
+    Sair

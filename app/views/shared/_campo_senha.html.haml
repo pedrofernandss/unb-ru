@@ -1,12 +1,17 @@
 -# Campo de senha com botão para mostrar/ocultar (Stimulus: password-visibility).
 -# Locais: f (form builder), atributo, rotulo, placeholder.
-.campo{class: ("campo--erro" if f.object.errors[atributo].any?), data: { controller: "password-visibility" }}
+-# Opcionais: autocomplete ("new-password" por padrão) e minimo (tamanho mínimo;
+-# nil para não exigir, como no login).
+- autocomplete = local_assigns.fetch(:autocomplete, "new-password")
+- minimo = local_assigns.fetch(:minimo, User::TAMANHO_MINIMO_SENHA)
+- com_erro = f.object&.errors&.include?(atributo)
+.campo{class: ("campo--erro" if com_erro), data: { controller: "password-visibility" }}
   .campo__cabecalho
     = f.label atributo, rotulo
     %span.campo__obrigatorio Obrigatório
   .campo__entrada
     = icon :lock
-    = f.password_field atributo, placeholder: placeholder, autocomplete: "new-password", required: true, minlength: User::TAMANHO_MINIMO_SENHA, data: { password_visibility_target: "input" }
+    = f.password_field atributo, placeholder: placeholder, autocomplete: autocomplete, required: true, minlength: minimo, data: { password_visibility_target: "input" }
     %button.campo__alternar{type: "button", aria: { label: "Mostrar senha", pressed: "false" }, data: { action: "password-visibility#toggle" }}
       = icon :eye, data: { password_visibility_target: "mostrar" }
       = icon :eye_off, data: { password_visibility_target: "ocultar" }, hidden: true

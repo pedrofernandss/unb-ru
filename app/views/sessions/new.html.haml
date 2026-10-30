@@ -1,12 +1,43 @@
 - content_for :title, "Login · Sistema de Acesso UnB"
 
+%header.card.cabecalho-pagina
+  .cabecalho-pagina__titulo
+    %span.cabecalho-pagina__icone= icon :lock
+    %h1 Autenticação
+  %span.etiqueta.etiqueta--sucesso Sistema de Acesso UnB
+
 %section.card.painel
   %p.sobretitulo
-    = icon :lock
+    = icon :id_card
     US04 · Login de usuário
-  %h2.painel__titulo Login
+  %h2.painel__titulo Acesso ao Sistema
   %p.painel__descricao
-    Tela de login em construção.
+    Informe sua matrícula e senha para iniciar a sessão. Estudantes, funcionários
+    e administradores entram por aqui e são levados à sua área.
+
+  - if flash[:alert]
+    .alerta.alerta--erro{role: "alert"}
+      = icon :circle_alert
+      %div= flash[:alert]
+
+  = form_with url: login_path, class: "formulario" do |f|
+    .campo
+      .campo__cabecalho
+        = f.label :matricula, "Matrícula SIGAA ou SIAPE"
+        %span.campo__obrigatorio Obrigatório
+      .campo__entrada
+        = icon :user
+        = f.text_field :matricula, value: params[:matricula], placeholder: "Ex: 2023123456 ou 1984201", inputmode: "numeric", autocomplete: "username", autofocus: true, required: true
+
+    = render "shared/campo_senha", f: f, atributo: :senha, rotulo: "Senha de Acesso", placeholder: "Digite sua senha", autocomplete: "current-password", minimo: nil
+
+    = f.button class: "botao botao--primario botao--largo" do
+      = icon :log_in
+      Entrar no Sistema
+
+  %p.painel__link
+    Ainda não tem conta?
+    = link_to "Cadastre-se", signup_path
 
   - if @usuarios_de_exemplo.present?
     .atalhos-dev
@@ -15,7 +46,3 @@
         = button_to "/teste/sessao", params: { user_id: usuario.id }, class: "botao botao--secundario botao--largo" do
           = icon :circle_user
           #{usuario.nome} · #{usuario.perfil} · #{usuario.matricula}
-
-  %p.painel__link
-    Ainda não tem conta?
-    = link_to "Cadastre-se", signup_path

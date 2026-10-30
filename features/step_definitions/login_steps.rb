@@ -1,7 +1,7 @@
 Given('que existe um estudante cadastrado com a matrícula {string} e senha {string}') do |matricula, senha|
   User.create!(
     nome: 'Estudante Teste',
-    matricula: matricula, 
+    matricula: matricula,
     password: senha
   )
 end
@@ -27,7 +27,7 @@ Then('eu devo ser redirecionado para a página inicial') do
 end
 
 Then('eu devo permanecer na página de login') do
-  expect(page).to have_current_path(new_user_session_path)
+  expect(page).to have_current_path('/login')
 end
 
 Then('eu devo ver a mensagem {string}') do |mensagem|
