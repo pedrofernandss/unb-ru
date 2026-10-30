@@ -1,0 +1,33 @@
+pt-BR:
+  activerecord:
+    models:
+      user:
+        one: "Usuário"
+        other: "Usuários"
+    attributes:
+      user:
+        nome: "Nome completo"
+        matricula: "Matrícula"
+        password: "Senha"
+        password_confirmation: "Confirmação de senha"
+    errors:
+      models:
+        user:
+          attributes:
+            matricula:
+              formato_matricula: "deve conter apenas números (7 a 12 dígitos)"
+              taken: "já está cadastrada"
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      blank: "não pode ficar em branco"
+      confirmation: "não confere com %{attribute}"
+      invalid: "não é válido(a)"
+      taken: "já está em uso"
+      too_short: "é muito curto(a) (mínimo: %{count} caracteres)"
+      too_long: "é muito longo(a) (máximo: %{count} caracteres)"
+      password_too_long: "é muito longa (máximo: 72 caracteres)"
+  helpers:
+    submit:
+      create: "Criar %{model}"
+      update: "Salvar %{model}"
