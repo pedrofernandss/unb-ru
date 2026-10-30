@@ -3,10 +3,18 @@
 %section.card.painel
   %p.sobretitulo
     = icon :lock
-    Login de usuário
+    US04 · Login de usuário
   %h2.painel__titulo Login
   %p.painel__descricao
     Tela de login em construção.
+
+  - if @usuarios_de_exemplo.present?
+    .atalhos-dev
+      %p.atalhos-dev__titulo Atalho de desenvolvimento: entrar sem senha como
+      - @usuarios_de_exemplo.each do |usuario|
+        = button_to "/teste/sessao", params: { user_id: usuario.id }, class: "botao botao--secundario botao--largo" do
+          = icon :circle_user
+          #{usuario.nome} · #{usuario.perfil} · #{usuario.matricula}
 
   %p.painel__link
     Ainda não tem conta?

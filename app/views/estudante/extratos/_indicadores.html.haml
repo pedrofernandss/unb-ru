@@ -1,0 +1,28 @@
+.indicadores
+  .card.indicador
+    .indicador__topo
+      %span.indicador__rotulo Total gasto no mês
+      %span.indicador__icone.indicador__icone--vermelho= icon :wallet
+    %strong.indicador__valor.indicador__valor--vermelho= number_to_currency(extrato.total_gasto)
+    .indicador__rodape
+      %span= pluralize(extrato.quantidade_debitos, "débito")
+      %span.indicador__nota.indicador__nota--vermelha Total consumido
+
+  .card.indicador
+    .indicador__topo
+      %span.indicador__rotulo Total de refeições realizadas
+      %span.indicador__icone.indicador__icone--verde= icon :utensils
+    %strong.indicador__valor
+      = extrato.total_refeicoes
+      %small= extrato.total_refeicoes == 1 ? "refeição" : "refeições"
+    .indicador__rodape
+      %span= extrato.refeicoes_por_tipo.map { |tipo, quantidade| "#{tipo}: #{quantidade}" }.join(" · ").presence || "Nenhuma refeição no período"
+
+  .card.indicador
+    .indicador__topo
+      %span.indicador__rotulo Total recarregado
+      %span.indicador__icone.indicador__icone--azul= icon :banknote
+    %strong.indicador__valor.indicador__valor--verde= number_to_currency(extrato.total_recarregado)
+    .indicador__rodape
+      %span= pluralize(extrato.quantidade_recargas, "recarga")
+      %span.indicador__nota Saldo atual: #{number_to_currency(current_user.saldo)}

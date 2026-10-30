@@ -1,0 +1,12 @@
+- content_for :title, "Início · RU UnB"
+
+.pagina-cabecalho
+  .pagina-cabecalho__texto
+    %p.sobretitulo Portal do Estudante · Início
+    %h1 Olá, #{current_user.nome.split.first}
+
+%section.card.painel
+  %p.painel__descricao
+    O cardápio do dia (US10) ainda está em construção. Enquanto isso, consulte o seu
+    = link_to "extrato de refeições", extrato_path
+    para acompanhar recargas e utilizações.

@@ -1,0 +1,17 @@
+- content_for :title, "Extrato e Histórico de Refeições · RU UnB"
+
+.pagina-cabecalho
+  .pagina-cabecalho__texto
+    %p.sobretitulo Portal do Estudante · Prestação de Contas
+    %h1 Extrato e Histórico de Refeições
+  .pagina-cabecalho__acoes
+    %button.botao.botao--secundario{type: "button", disabled: true, title: "Exportação em PDF (US11) em construção"}
+      = icon :file_down
+      Exportar PDF
+    %button.botao.botao--secundario{type: "button", data: { controller: "impressao", action: "impressao#imprimir" }}
+      = icon :printer
+      Imprimir
+
+= render "indicadores", extrato: @extrato
+= render "filtros", extrato: @extrato
+= render "lancamentos", extrato: @extrato

@@ -1,0 +1,65 @@
+.card.lancamentos
+  .lancamentos__cabecalho
+    %h2
+      Lançamentos contábeis e registros de catraca
+      %span.etiqueta.etiqueta--info= "#{extrato.total_registros} #{extrato.total_registros == 1 ? 'registro' : 'registros'}"
+    %span.lancamentos__nota
+      = icon :shield_check
+      Registros auditáveis assinados digitalmente
+
+  .tabela-rolavel
+    %table.tabela
+      %thead
+        %tr
+          %th Data e Hora
+          %th Refeição/Evento
+          %th Restaurante
+          %th Método de Acesso
+          %th.tabela__numerico Valor
+          %th Comprovante
+      %tbody
+        - extrato.transacoes.each do |transacao|
+          %tr{class: ("tabela__linha--credito" if transacao.recarga?)}
+            %td
+              .tabela__data
+                %span.ponto{class: (transacao.recarga? ? "ponto--verde" : "ponto--azul")}
+                %div
+                  %strong= l(transacao.data_hora, format: "%d/%m/%Y %H:%M")
+                  %small= dia_relativo(transacao.data_hora)
+            %td
+              %span.etiqueta{class: etiqueta_do_tipo(transacao.tipo)}= transacao.tipo
+            %td
+              %strong= transacao.local
+              - if transacao.detalhe_local
+                %small= transacao.detalhe_local
+            %td
+              - if transacao.metodo
+                %span.metodo
+                  = icon(transacao.recarga? ? :wallet : :qr_code)
+                  = transacao.metodo
+            %td.tabela__numerico
+              %strong{class: (transacao.recarga? ? "tabela__valor--credito" : "tabela__valor--debito")}= moeda_assinada(transacao.valor)
+            %td
+              = link_to comprovante_extrato_path(transacao), class: "botao botao--miudo" do
+                = icon :receipt
+                Ver Comprovante
+
+  - if extrato.total_registros.zero?
+    .estado-vazio
+      = icon :receipt, class: "estado-vazio__icone"
+      %p Não há lançamentos no período selecionado.
+      %small Ajuste as datas acima ou faça uma recarga para começar a usar o RU.
+  - else
+    .paginacao
+      %span.paginacao__resumo
+        Exibindo #{extrato.primeiro_da_pagina}-#{extrato.ultimo_da_pagina} de #{extrato.total_registros} registros auditados
+      - if extrato.total_paginas > 1
+        %nav.paginacao__paginas{"aria-label": "Páginas do extrato"}
+          - if extrato.pagina > 1
+            = link_to extrato_path(extrato.parametros.merge(pagina: extrato.pagina - 1)), class: "paginacao__pagina", "aria-label": "Página anterior" do
+              = icon :chevron_left
+          - (1..extrato.total_paginas).each do |numero|
+            = link_to numero, extrato_path(extrato.parametros.merge(pagina: numero)), class: [ "paginacao__pagina", ("ativa" if numero == extrato.pagina) ]
+          - if extrato.pagina < extrato.total_paginas
+            = link_to extrato_path(extrato.parametros.merge(pagina: extrato.pagina + 1)), class: "paginacao__pagina", "aria-label": "Próxima página" do
+              = icon :chevron_right

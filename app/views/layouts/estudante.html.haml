@@ -1,0 +1,52 @@
+!!!
+%html{lang: "pt-BR"}
+  %head
+    %title= content_for(:title) || "Portal do Estudante · RU UnB"
+    %meta{name: "viewport", content: "width=device-width,initial-scale=1"}
+    %meta{name: "application-name", content: "RU UnB Digital"}
+    = csrf_meta_tags
+    = csp_meta_tag
+    = yield :head
+
+    %link{rel: "icon", href: "/icon.png", type: "image/png"}
+    %link{rel: "apple-touch-icon", href: "/icon.png"}
+
+    = stylesheet_link_tag :app, "data-turbo-track": "reload"
+    = javascript_importmap_tags
+
+  %body.portal
+    %header.cabecalho-portal
+      .cabecalho-portal__conteudo
+        = link_to home_path, class: "marca" do
+          = image_tag "logo-unb.png", alt: "Universidade de Brasília", class: "marca__logo"
+          %span.marca__texto
+            %strong RU UnB Digital
+            %small Portal do Estudante
+
+        %nav.navegacao{"aria-label": "Portal do Estudante"}
+          = link_to "Início", home_path, class: ("ativo" if current_page?(home_path))
+          = link_to "Recarga", "/recarga"
+          = link_to "Extrato de Refeições", extrato_path, class: ("ativo" if request.path.start_with?(extrato_path))
+          = link_to "FastPass", "/fastpass-home"
+
+        .cabecalho-portal__usuario
+          .usuario-resumo
+            %strong= current_user.nome
+            %small Matrícula #{current_user.matricula}
+          .saldo-chip
+            %small Saldo RU
+            %strong= number_to_currency(current_user.saldo)
+          = button_to logout_path, method: :delete, class: "botao botao--texto", title: "Sair" do
+            = icon :log_out
+            Sair
+
+    %main.portal__conteudo
+      - if flash[:notice]
+        .alerta.alerta--sucesso{role: "status"}
+          = icon :circle_check
+          %div= flash[:notice]
+      - if flash[:alert]
+        .alerta.alerta--erro{role: "alert"}
+          = icon :circle_alert
+          %div= flash[:alert]
+      = yield
