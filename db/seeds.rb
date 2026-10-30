@@ -62,5 +62,21 @@ restaurantes.each do |restaurante|
   end
 end
 
+puts "Semeando extrato de exemplo do aluno..."
+aluno = User.find_by!(matricula: "2023123456")
+if aluno.transacoes.none?
+  ru = restaurantes.first
+  catracas = ru.catracas.order(:numero).to_a
+  agora = Time.current
+  aluno.transacoes.create!([
+    { data_hora: agora - 6.days, tipo: "Recarga de Saldo", metodo: "PIX", valor: 45 },
+    { data_hora: agora - 5.days + 12.hours, tipo: "Almoço", metodo: "QR Code App", valor: -4.5, restaurante: ru, catraca: catracas[0] },
+    { data_hora: agora - 4.days + 19.hours, tipo: "Jantar", metodo: "QR Code App", valor: -4.5, restaurante: ru, catraca: catracas[2] },
+    { data_hora: agora - 2.days + 7.hours, tipo: "Café da Manhã", metodo: "QR Code App", valor: -2.5, restaurante: ru, catraca: catracas[1] },
+    { data_hora: agora - 1.day + 12.hours, tipo: "Almoço", metodo: "QR Code App", valor: -4.5, restaurante: ru, catraca: catracas[3] },
+    { data_hora: agora - 1.hour, tipo: "Almoço", metodo: "QR Code App", valor: -4.5, restaurante: ru, catraca: catracas[0] }
+  ])
+end
+
 puts "Pronto: #{Universidade.count} universidade, #{Campus.count} campi, #{Restaurante.count} restaurantes, " \
      "#{Catraca.count} catracas, #{TipoRefeicao.count} tipos de refeição, #{Refeicao.count} refeições, #{User.count} usuários."
