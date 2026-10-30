@@ -3,6 +3,7 @@ class Catraca < ApplicationRecord
   belongs_to :funcionario, class_name: "User", optional: true, inverse_of: :catraca
 
   has_many :historicos_catraca, class_name: "HistoricoCatraca", dependent: :destroy
+  has_many :transacoes, dependent: :nullify
 
   validates :numero, presence: true, uniqueness: { scope: :restaurante_id }
   validates :piso, presence: true, numericality: { only_integer: true, greater_than: 0 }
