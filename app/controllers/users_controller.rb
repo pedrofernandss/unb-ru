@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  allow_unauthenticated_access
   layout "sessao"
 
   def new
