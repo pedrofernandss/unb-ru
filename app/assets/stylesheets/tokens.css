@@ -1,0 +1,71 @@
+/*
+ * Design tokens do Sistema de Acesso UnB (paleta inspirada no Design System gov.br)
+ * e reset mínimo. Todos os componentes usam estas variáveis.
+ */
+:root {
+  --cor-primaria: #1351b4;
+  --cor-primaria-escura: #0c326f;
+  --cor-primaria-clara: #e8effb;
+  --cor-governo: #071d41;
+
+  --cor-sucesso: #168821;
+  --cor-sucesso-fundo: #e3f5e1;
+  --cor-erro: #c5250b;
+  --cor-erro-fundo: #fdece9;
+
+  --cor-fundo: #f3f5f8;
+  --cor-superficie: #ffffff;
+  --cor-campo: #f1f3f5;
+  --cor-borda: #d8dde5;
+
+  --cor-texto: #1c1c1c;
+  --cor-texto-suave: #555c66;
+  --cor-texto-fraca: #8a919b;
+
+  --raio: 8px;
+  --raio-grande: 12px;
+  --sombra: 0 1px 2px rgba(7, 29, 65, 0.06), 0 8px 24px rgba(7, 29, 65, 0.06);
+  --foco: 0 0 0 3px rgba(19, 81, 180, 0.25);
+
+  --fonte: "Rawline", "Raleway", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fonte);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+a {
+  color: var(--cor-primaria);
+}
+
+a:hover {
+  color: var(--cor-primaria-escura);
+}
+
+/* O estilo padrão do navegador não aplica [hidden] a elementos SVG. */
+[hidden] {
+  display: none !important;
+}
+
+.icone {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
+}
