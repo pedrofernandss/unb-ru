@@ -1,4 +1,4 @@
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_100011) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
   create_table "campi", force: :cascade do |t|
     t.integer "universidade_id", null: false
     t.string "nome", null: false
@@ -100,8 +100,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_100011) do
     t.decimal "valor", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "metodo"
+    t.integer "catraca_id"
     t.index ["aluno_id", "data_hora"], name: "index_transacoes_on_aluno_id_and_data_hora"
     t.index ["aluno_id"], name: "index_transacoes_on_aluno_id"
+    t.index ["catraca_id"], name: "index_transacoes_on_catraca_id"
     t.index ["refeicao_id"], name: "index_transacoes_on_refeicao_id"
     t.index ["restaurante_id"], name: "index_transacoes_on_restaurante_id"
   end
@@ -137,6 +140,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_100011) do
   add_foreign_key "refeicoes", "restaurantes"
   add_foreign_key "refeicoes", "tipos_refeicao", column: "tipo_refeicao_id"
   add_foreign_key "restaurantes", "campi"
+  add_foreign_key "transacoes", "catracas"
   add_foreign_key "transacoes", "refeicoes"
   add_foreign_key "transacoes", "restaurantes"
   add_foreign_key "transacoes", "users", column: "aluno_id"
