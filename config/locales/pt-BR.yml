@@ -17,6 +17,12 @@ pt-BR:
             matricula:
               formato_matricula: "deve conter apenas números (7 a 12 dígitos)"
               taken: "já está cadastrada"
+        tipo_refeicao:
+          attributes:
+            base:
+              horario_invalido: "Horário inválido"
+              fim_antes_do_inicio: "O horário final deve ser posterior ao inicial"
+              sobreposicao: "O horário do %{turno} se sobrepõe ao turno %{outro}"
   errors:
     format: "%{attribute} %{message}"
     messages:

@@ -1,8 +1,40 @@
 module Admin
   # Gestão dos turnos (tipos de refeição) e dos time-frames do FastPass (US16).
+  # A edição acontece na própria página da lista, por isso edit e update renderizam :index.
   class TurnosController < BaseController
+    before_action :carregar_turnos
+    before_action :carregar_turno_em_edicao, only: %i[edit update]
+
     def index
+    end
+
+    def edit
+      render :index
+    end
+
+    def update
+      if @turno_em_edicao.update(turno_params)
+        redirect_to admin_turnos_path, notice: "Turno atualizado com sucesso"
+      else
+        flash.now[:alert] = "Não foi possível atualizar o turno"
+        render :index, status: :unprocessable_entity
+      end
+    end
+
+    private
+
+    # Consulta nova ao banco: a lista mostra sempre os horários salvos, mesmo
+    # quando o turno em edição tem valores inválidos ainda não gravados.
+    def carregar_turnos
       @turnos = TipoRefeicao.order(:hora_inicio)
+    end
+
+    def carregar_turno_em_edicao
+      @turno_em_edicao = TipoRefeicao.find(params[:id])
+    end
+
+    def turno_params
+      params.expect(tipo_refeicao: [ :hora_inicio, :hora_fim ])
     end
   end
 end

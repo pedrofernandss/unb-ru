@@ -19,4 +19,7 @@
           %tr.turno
             %td= turno.nome
             %td= faixa_de_horario(turno.hora_inicio, turno.hora_fim)
-            %td
+            %td= button_to "Editar Horários do #{turno.nome}", edit_admin_turno_path(turno), method: :get, class: "botao botao--secundario botao--miudo"
+
+- if @turno_em_edicao
+  = render "formulario_horario", turno: @turno_em_edicao

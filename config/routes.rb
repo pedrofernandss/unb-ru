@@ -18,7 +18,7 @@ Rails.application.routes.draw do
 
   # Administração Geral
   namespace :admin do
-    resources :turnos, only: :index
+    resources :turnos, only: %i[index edit update]
   end
 
   # Portal do Estudante
