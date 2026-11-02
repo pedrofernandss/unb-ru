@@ -1,0 +1,22 @@
+- content_for :title, "Turnos e Time-frames · RU UnB"
+
+.pagina-cabecalho
+  .pagina-cabecalho__texto
+    %p.sobretitulo Administração Geral · Turnos e Time-frames
+    %h1 Turnos e Time-frames
+
+%section.card.painel
+  %h2.painel__titulo Horários dos turnos
+  .tabela-rolavel
+    %table.tabela
+      %thead
+        %tr
+          %th Turno
+          %th Horário
+          %th Ações
+      %tbody
+        - @turnos.each do |turno|
+          %tr.turno
+            %td= turno.nome
+            %td= faixa_de_horario(turno.hora_inicio, turno.hora_fim)
+            %td
