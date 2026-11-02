@@ -1,0 +1,47 @@
+%section.card.painel
+  %h2.painel__titulo Time-frames do FastPass
+  %p.painel__descricao
+    Divida um turno em janelas de chegada. A granularidade precisa dividir a duração do turno.
+
+  - if turno.errors.any?
+    .alerta.alerta--erro{role: "alert"}
+      = icon :circle_alert
+      %ul.alerta__lista
+        - turno.errors.full_messages.each do |mensagem|
+          %li= mensagem
+
+  = form_with model: turno, scope: :configuracao, url: configurar_time_frames_admin_turnos_path, method: :patch, class: "formulario" do |f|
+    .campo
+      .campo__cabecalho
+        = f.label :id, "Turno de Referência"
+      .campo__entrada
+        = f.select :id, turnos.map { |t| [ t.nome, t.id ] }
+    .campo-linha
+      .campo{class: ("campo--erro" if turno.errors.any?)}
+        .campo__cabecalho
+          = f.label :granularidade_minutos, "Granularidade da Janela"
+          %span.campo__obrigatorio minutos
+        .campo__entrada
+          = f.number_field :granularidade_minutos, min: 1, required: true
+      .campo
+        .campo__cabecalho
+          = f.label :tolerancia_minutos, "Tolerância de Atraso"
+          %span.campo__obrigatorio minutos
+        .campo__entrada
+          = f.number_field :tolerancia_minutos, min: 0, required: true
+
+    = f.button class: "botao botao--primario" do
+      = icon :save
+      Salvar Configuração
+
+%section.card.painel
+  %h2.painel__titulo Janelas por turno
+  - turnos.each do |t|
+    .janelas-fastpass
+      %h3= t.nome
+      - if t.time_frames.any?
+        %p.painel__nota
+          #{t.time_frames.size} janelas de #{t.granularidade_minutos} min · tolerância de atraso de #{t.tolerancia_minutos} min
+        = render "shared/grade_time_frames", time_frames: t.time_frames
+      - else
+        %p.painel__nota Nenhum time-frame configurado.
