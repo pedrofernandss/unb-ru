@@ -23,3 +23,6 @@
 
 - if @turno_em_edicao
   = render "formulario_horario", turno: @turno_em_edicao
+
+- if @turnos.any?
+  = render "time_frames", turnos: @turnos, turno: @turno_de_referencia || @turnos.first

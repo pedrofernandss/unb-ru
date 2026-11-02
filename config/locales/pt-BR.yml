@@ -23,6 +23,10 @@ pt-BR:
               horario_invalido: "Horário inválido"
               fim_antes_do_inicio: "O horário final deve ser posterior ao inicial"
               sobreposicao: "O horário do %{turno} se sobrepõe ao turno %{outro}"
+              granularidade_nao_numerica: "A granularidade deve ser um número"
+              granularidade_nao_positiva: "A granularidade deve ser maior que 0"
+              granularidade_nao_divide: "A granularidade deve dividir a duração do turno (%{duracao} min)"
+              tolerancia_invalida: "A tolerância deve ser um número inteiro maior ou igual a 0"
   errors:
     format: "%{attribute} %{message}"
     messages:

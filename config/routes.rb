@@ -18,7 +18,9 @@ Rails.application.routes.draw do
 
   # Administração Geral
   namespace :admin do
-    resources :turnos, only: %i[index edit update]
+    resources :turnos, only: %i[index edit update] do
+      patch :configurar_time_frames, on: :collection
+    end
   end
 
   # Portal do Estudante
