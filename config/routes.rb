@@ -28,6 +28,12 @@ Rails.application.routes.draw do
     get "home", to: "home#index", as: :home
     get "extrato", to: "extratos#show", as: :extrato
     get "extrato/comprovantes/:id", to: "extratos#comprovante", as: :comprovante_extrato
+
+    # Sorteio do FastPass (US13)
+    get "fastpass-home", to: "fastpass#show", as: :fastpass
+    scope "fastpass", as: "fastpass" do
+      resources :inscricoes, controller: "inscricoes_fastpass", only: :create
+    end
   end
 
   if Rails.env.local?

@@ -19,6 +19,28 @@
   text-align: center;
 }
 
+/* Janela escolhível na inscrição do estudante (estudante/fastpass). */
+.time-frame--opcao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  cursor: pointer;
+}
+
+.time-frame--opcao:has(:checked) {
+  border-color: var(--cor-primaria);
+  background: var(--cor-primaria-clara);
+  color: var(--cor-primaria-escura);
+  box-shadow: var(--foco);
+}
+
+.secao-turno .formulario .botao {
+  margin-top: 1rem;
+}
+
 .janelas-fastpass + .janelas-fastpass {
   margin-top: 1.5rem;
   padding-top: 1.5rem;
