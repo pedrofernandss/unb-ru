@@ -27,6 +27,10 @@ pt-BR:
               granularidade_nao_positiva: "A granularidade deve ser maior que 0"
               granularidade_nao_divide: "A granularidade deve dividir a duração do turno (%{duracao} min)"
               tolerancia_invalida: "A tolerância deve ser um número inteiro maior ou igual a 0"
+        inscricao_fastpass:
+          attributes:
+            base:
+              ja_inscrito_no_turno: "Você já possui uma inscrição para o %{turno}. Cancele a atual para alterar o horário."
   errors:
     format: "%{attribute} %{message}"
     messages:

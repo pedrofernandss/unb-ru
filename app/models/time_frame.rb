@@ -2,5 +2,8 @@
 class TimeFrame < ApplicationRecord
   belongs_to :tipo_refeicao
 
+  # Janela apagada (ex.: o admin mudou o horário do turno) leva as inscrições junto.
+  has_many :inscricoes_fastpass, class_name: "InscricaoFastpass", dependent: :destroy
+
   validates :inicio, :fim, presence: true
 end

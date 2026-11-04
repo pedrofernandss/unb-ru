@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_120001) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
   create_table "campi", force: :cascade do |t|
     t.integer "universidade_id", null: false
     t.string "nome", null: false
@@ -60,16 +60,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_120001) do
 
   create_table "inscricoes_fastpass", force: :cascade do |t|
     t.integer "aluno_id", null: false
-    t.integer "restaurante_id", null: false
-    t.integer "refeicao_id", null: false
+    t.integer "restaurante_id"
+    t.integer "refeicao_id"
     t.date "data", null: false
     t.time "hora_chegada"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "time_frame_id", null: false
+    t.string "status", default: "inscrito", null: false
     t.index ["aluno_id", "refeicao_id"], name: "index_inscricoes_fastpass_on_aluno_id_and_refeicao_id", unique: true
     t.index ["aluno_id"], name: "index_inscricoes_fastpass_on_aluno_id"
     t.index ["refeicao_id"], name: "index_inscricoes_fastpass_on_refeicao_id"
     t.index ["restaurante_id"], name: "index_inscricoes_fastpass_on_restaurante_id"
+    t.index ["time_frame_id"], name: "index_inscricoes_fastpass_on_time_frame_id"
   end
 
   create_table "refeicoes", force: :cascade do |t|
@@ -160,6 +163,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_120001) do
   add_foreign_key "historicos_catraca", "users", column: "aluno_id"
   add_foreign_key "inscricoes_fastpass", "refeicoes"
   add_foreign_key "inscricoes_fastpass", "restaurantes"
+  add_foreign_key "inscricoes_fastpass", "time_frames"
   add_foreign_key "inscricoes_fastpass", "users", column: "aluno_id"
   add_foreign_key "refeicoes", "restaurantes"
   add_foreign_key "refeicoes", "tipos_refeicao", column: "tipo_refeicao_id"
