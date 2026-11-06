@@ -27,7 +27,7 @@
           = link_to "Início", home_path, class: ("ativo" if current_page?(home_path))
           = link_to "Recarga", "/recarga"
           = link_to "Extrato de Refeições", extrato_path, class: ("ativo" if request.path.start_with?(extrato_path))
-          = link_to "FastPass", "/fastpass-home"
+          = link_to "FastPass", fastpass_path, class: ("ativo" if current_page?(fastpass_path))
 
         .cabecalho-portal__usuario
           .usuario-resumo
