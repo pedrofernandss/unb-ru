@@ -1,0 +1,27 @@
+%section.card.painel
+  %h2.painel__titulo Editar horários do #{turno.nome}
+
+  - if turno.errors.any?
+    .alerta.alerta--erro{role: "alert"}
+      = icon :circle_alert
+      %ul.alerta__lista
+        - turno.errors.full_messages.each do |mensagem|
+          %li= mensagem
+
+  = form_with model: turno, url: admin_turno_path(turno), class: "formulario" do |f|
+    .campo-linha
+      .campo{class: ("campo--erro" if turno.errors.any?)}
+        .campo__cabecalho
+          = f.label :hora_inicio, "Início"
+        .campo__entrada
+          = f.time_field :hora_inicio, value: turno.hora_inicio&.strftime("%H:%M"), required: true
+      .campo{class: ("campo--erro" if turno.errors.any?)}
+        .campo__cabecalho
+          = f.label :hora_fim, "Fim"
+        .campo__entrada
+          = f.time_field :hora_fim, value: turno.hora_fim&.strftime("%H:%M"), required: true
+
+    = f.button class: "botao botao--primario" do
+      = icon :save
+      Salvar
+    = link_to "Cancelar", admin_turnos_path, class: "botao botao--texto"

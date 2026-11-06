@@ -31,6 +31,14 @@ tipos = {
   [ chave, TipoRefeicao.find_or_create_by!(nome: nome) { |t| t.hora_inicio = inicio; t.hora_fim = fim } ]
 end
 
+puts "Semeando time-frames do FastPass (janelas de 15 min, tolerância de 3 min)..."
+tipos.each_value do |tipo|
+  next if tipo.time_frames.any?
+
+  tipo.configurar_time_frames(granularidade: 15, tolerancia: 3) ||
+    raise("Time-frames inválidos para #{tipo.nome}: #{tipo.errors.full_messages.to_sentence}")
+end
+
 puts "Semeando usuários (senha de todos: senha123)..."
 [
   { nome: "Administrador do Sistema", matricula: "1000001", perfil: :administrador },
@@ -79,4 +87,5 @@ if aluno.transacoes.none?
 end
 
 puts "Pronto: #{Universidade.count} universidade, #{Campus.count} campi, #{Restaurante.count} restaurantes, " \
-     "#{Catraca.count} catracas, #{TipoRefeicao.count} tipos de refeição, #{Refeicao.count} refeições, #{User.count} usuários."
+     "#{Catraca.count} catracas, #{TipoRefeicao.count} tipos de refeição, #{TimeFrame.count} time-frames, " \
+     "#{Refeicao.count} refeições, #{User.count} usuários."
