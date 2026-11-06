@@ -21,6 +21,10 @@
       %p.etiqueta.etiqueta--sucesso
         = icon :circle_check
         Inscrito no Sorteio (#{faixa_de_horario(inscricao.time_frame.inicio, inscricao.time_frame.fim)})
+      - if inscricao.inscrito?
+        = button_to "Cancelar inscrição", fastpass_inscricao_path(inscricao), method: :delete,
+                    class: "botao botao--secundario",
+                    form: { data: { turbo_confirm: "Cancelar a inscrição no sorteio do #{turno.nome}?" } }
     - else
       = form_with url: fastpass_inscricoes_path, class: "formulario" do |f|
         %ul.grade-time-frames

@@ -32,7 +32,7 @@ Rails.application.routes.draw do
     # Sorteio do FastPass (US13)
     get "fastpass-home", to: "fastpass#show", as: :fastpass
     scope "fastpass", as: "fastpass" do
-      resources :inscricoes, controller: "inscricoes_fastpass", only: :create
+      resources :inscricoes, controller: "inscricoes_fastpass", only: %i[create destroy]
     end
   end
 
