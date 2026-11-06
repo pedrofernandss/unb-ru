@@ -42,7 +42,8 @@ RSpec.describe "Exportação do extrato", type: :request do
   it "preserva filtros no link e na resposta sem lançamentos" do
     entrar_como(aluno)
     get extrato_path, params: filtros.merge(metodo: "PIX")
-    expect(response.body).to include("extrato/exportar?", "metodo=PIX")
+    formulario = Nokogiri::HTML(response.body).at_css('form[action="/extrato/exportar"]')
+    expect(formulario.at_css('input[name="metodo"]')["value"]).to eq("PIX")
     get exportar_extrato_path, params: filtros.merge(metodo: "PIX")
     expect(response).to redirect_to(extrato_path(filtros.merge(metodo: "PIX")))
     follow_redirect!

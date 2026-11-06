@@ -5,7 +5,7 @@
     %p.sobretitulo Portal do Estudante · Prestação de Contas
     %h1 Extrato e Histórico de Refeições
   .pagina-cabecalho__acoes
-    = link_to exportar_extrato_path(@extrato.parametros), class: "botao botao--secundario", data: { turbo: false } do
+    = button_to exportar_extrato_path, method: :get, params: @extrato.parametros, class: "botao botao--secundario", form: { data: { turbo: false } } do
       = icon :file_down
       Exportar PDF
     %button.botao.botao--secundario{type: "button", data: { controller: "impressao", action: "impressao#imprimir" }}
