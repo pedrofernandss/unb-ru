@@ -1,4 +1,16 @@
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
+#
+# It's strongly recommended that you check this file into your version control system.
+
+ActiveRecord::Schema[8.1].define(version: 2026_11_06_090000) do
   create_table "campi", force: :cascade do |t|
     t.integer "universidade_id", null: false
     t.string "nome", null: false
@@ -58,6 +70,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
     t.index ["aluno_id"], name: "index_inscricoes_fastpass_on_aluno_id"
     t.index ["refeicao_id"], name: "index_inscricoes_fastpass_on_refeicao_id"
     t.index ["restaurante_id"], name: "index_inscricoes_fastpass_on_restaurante_id"
+  end
+
+  create_table "recargas", force: :cascade do |t|
+    t.integer "aluno_id", null: false
+    t.string "chave", null: false
+    t.integer "quantidade", null: false
+    t.decimal "valor", precision: 10, scale: 2, null: false
+    t.string "metodo", null: false
+    t.string "status", default: "pendente", null: false
+    t.integer "transacao_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["aluno_id"], name: "index_recargas_on_aluno_id"
+    t.index ["chave"], name: "index_recargas_on_chave", unique: true
+    t.index ["transacao_id"], name: "index_recargas_on_transacao_id", unique: true
+    t.check_constraint "quantidade BETWEEN 1 AND 50", name: "recarga_quantidade_valida"
+    t.check_constraint "valor > 0", name: "recarga_valor_positivo"
   end
 
   create_table "refeicoes", force: :cascade do |t|
@@ -137,6 +166,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
   add_foreign_key "inscricoes_fastpass", "refeicoes"
   add_foreign_key "inscricoes_fastpass", "restaurantes"
   add_foreign_key "inscricoes_fastpass", "users", column: "aluno_id"
+  add_foreign_key "recargas", "transacoes"
+  add_foreign_key "recargas", "users", column: "aluno_id"
   add_foreign_key "refeicoes", "restaurantes"
   add_foreign_key "refeicoes", "tipos_refeicao", column: "tipo_refeicao_id"
   add_foreign_key "restaurantes", "campi"

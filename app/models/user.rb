@@ -11,6 +11,7 @@ class User < ApplicationRecord
   # Relacionamentos de Aluno
   has_many :cartoes, foreign_key: :aluno_id, inverse_of: :aluno, dependent: :destroy
   has_many :transacoes, foreign_key: :aluno_id, inverse_of: :aluno, dependent: :destroy
+  has_many :recargas, foreign_key: :aluno_id, inverse_of: :aluno, dependent: :destroy
   has_many :inscricoes_fastpass, class_name: "InscricaoFastpass", foreign_key: :aluno_id,
                                  inverse_of: :aluno, dependent: :destroy
   has_many :historicos_catraca, class_name: "HistoricoCatraca", foreign_key: :aluno_id,
