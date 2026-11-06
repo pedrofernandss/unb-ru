@@ -13,7 +13,12 @@ Rails.application.routes.draw do
   delete "logout", to: "sessions#destroy", as: :logout
 
   # Páginas iniciais do funcionário (US05) e do administrador (US08), ainda em construção.
-  get "configuracao-de-ponto", to: "paginas#em_construcao", as: :configuracao_de_ponto, defaults: { area: "Terminal Operacional" }
+  scope module: :operador do
+    get "configuracao-de-ponto", to: "pontos_de_acesso#edit", as: :configuracao_de_ponto
+    post "configuracao-de-ponto", to: "pontos_de_acesso#update"
+    get "terminal-de-validacao", to: "validacoes#new", as: :terminal_de_validacao
+    get "historico-local", to: "historicos#index", as: :historico_local
+  end
   get "admin/restaurantes", to: "paginas#em_construcao", as: :admin_restaurantes, defaults: { area: "Administração Geral" }
 
   # Portal do Estudante

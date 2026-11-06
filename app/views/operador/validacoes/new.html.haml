@@ -1,0 +1,9 @@
+.pagina-cabecalho
+  %div
+    %p.sobretitulo Terminal Operacional
+    %h1 Terminal de Validação
+= render "operador/contexto"
+.card.painel
+  %h2 Leitura de QR Code
+  %p Aguardando leitura para validação.
+= render "operador/historicos", historicos: @historicos

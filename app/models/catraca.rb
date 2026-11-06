@@ -8,4 +8,6 @@ class Catraca < ApplicationRecord
   validates :numero, presence: true, uniqueness: { scope: :restaurante_id }
   validates :piso, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :funcionario_id, uniqueness: true, allow_nil: true
+
+  def identificacao = format("Catraca %02d", numero)
 end

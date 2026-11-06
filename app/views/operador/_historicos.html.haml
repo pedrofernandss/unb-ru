@@ -1,0 +1,18 @@
+.card.lancamentos
+  .lancamentos__cabecalho
+    %h2 Últimos registros desta catraca
+  - if historicos.empty?
+    .estado-vazio
+      %p Nenhum registro de acesso nesta catraca.
+  - else
+    .tabela-rolavel
+      %table.tabela.acessos
+        %thead
+          %tr
+            %th Data e hora
+            %th Matrícula
+        %tbody
+          - historicos.each do |historico|
+            %tr
+              %td= l(historico.data_hora, format: :short)
+              %td= historico.aluno.matricula

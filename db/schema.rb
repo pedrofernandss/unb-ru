@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_06_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_06_091000) do
   create_table "campi", force: :cascade do |t|
     t.integer "universidade_id", null: false
     t.string "nome", null: false
@@ -41,6 +41,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_090000) do
     t.integer "piso", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "online", default: false, null: false
     t.index ["funcionario_id"], name: "index_catracas_on_funcionario_id", unique: true
     t.index ["restaurante_id", "numero"], name: "index_catracas_on_restaurante_id_and_numero", unique: true
     t.index ["restaurante_id"], name: "index_catracas_on_restaurante_id"

@@ -1,0 +1,8 @@
+.ponto-grade { display: grid; grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr); gap: 1.5rem; align-items: start; }
+.ponto-grade fieldset { margin: 0 0 1.5rem; padding: 0; border: 0; }
+.ponto-grade legend { font-weight: 700; margin-bottom: 1rem; }
+.ponto-grade h2 { font-size: 1rem; margin: 1rem 0 .5rem; }
+.ponto-grade h3 { font-size: .875rem; margin: 1rem 0 .5rem; color: var(--cor-texto-suave); }
+.unidades-operacionais .opcao-cartao { margin-bottom: .75rem; }
+.contexto-operacao { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+@media (max-width: 760px) { .ponto-grade { grid-template-columns: 1fr; } }
