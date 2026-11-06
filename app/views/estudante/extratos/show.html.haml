@@ -5,7 +5,7 @@
     %p.sobretitulo Portal do Estudante · Prestação de Contas
     %h1 Extrato e Histórico de Refeições
   .pagina-cabecalho__acoes
-    %button.botao.botao--secundario{type: "button", disabled: true, title: "Exportação em PDF (US11) em construção"}
+    = link_to exportar_extrato_path(@extrato.parametros), class: "botao botao--secundario", data: { turbo: false } do
       = icon :file_down
       Exportar PDF
     %button.botao.botao--secundario{type: "button", data: { controller: "impressao", action: "impressao#imprimir" }}

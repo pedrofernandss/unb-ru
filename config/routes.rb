@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   scope module: :estudante do
     get "home", to: "home#index", as: :home
     get "extrato", to: "extratos#show", as: :extrato
+    get "extrato/exportar", to: "extratos#exportar", as: :exportar_extrato
     get "extrato/comprovantes/:id", to: "extratos#comprovante", as: :comprovante_extrato
   end
 
