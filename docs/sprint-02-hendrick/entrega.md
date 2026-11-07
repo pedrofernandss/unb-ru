@@ -66,6 +66,7 @@ O comando é entregue após persistir a decisão, com registro de entrega e poss
 | BDD das quatro issues | 10 cenários / 82 passos aprovados |
 | BDD afetados: quatro issues + cadastro/login/extrato + FastPass/turnos do Arthur | 28 cenários / 232 passos aprovados |
 | RSpec integrado final | 47 exemplos, 0 falhas |
+| RSpec por branch revisável | Setup: 1; PDF: 5; recarga: 20; ponto: 26 — todos sem falhas |
 | Minitest integrado final | 35 testes, 175 assertions, 0 falhas/erros |
 | Zeitwerk | Carregamento completo aprovado |
 | RuboCop dos arquivos Ruby alterados, excluindo schema gerado | 35 arquivos, nenhuma ocorrência na execução registrada |
@@ -75,7 +76,7 @@ Os 32 cenários sem aprovação ficam em cardápio, notificação FastPass, rela
 
 RuboCop: a execução inicial incluindo `db/schema.rb` apontou 84 ocorrências, predominantemente espaçamento do schema gerado. Foram corrigidos somente espaçamentos de três linhas dos specs novos; o schema não recebeu formatação ampla. CI completo, `test:system` e auditoria de dependências não foram certificados como aprovados.
 
-As migrations de recarga, disponibilidade, processamento de acesso e as dependências #27/#28 foram executadas em banco de teste. RSpec cobre PDF real com 65 registros e múltiplas páginas, isolamento/filtros, limites de quantidade, PIX/cartão aprovados, recusa, rollback, confirmação repetida, autorização, duas sessões, troca/logout, datas erradas, contemplação ausente, limites exatos de horário e repetição de evento.
+As migrations de recarga, disponibilidade, processamento de acesso e as dependências #27/#28 foram executadas em banco de teste. Também foi criado outro banco isolado do zero, executadas todas as migrations, revertidas as três migrations próprias e reaplicadas, sem violações de chaves estrangeiras. RSpec cobre PDF real com 65 registros e múltiplas páginas, isolamento/filtros, limites de quantidade, PIX/cartão aprovados, recusa, rollback, confirmação repetida, autorização, duas sessões, troca/logout, datas erradas, contemplação ausente, limites exatos de horário e repetição de evento.
 
 ## Revisão visual e divergências
 
