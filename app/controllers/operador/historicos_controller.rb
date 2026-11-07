@@ -3,7 +3,7 @@ module Operador
     before_action :exigir_ponto
 
     def index
-      @historicos = catraca_em_operacao.historicos_catraca.includes(:aluno).order(data_hora: :desc).limit(100)
+      @historicos = catraca_em_operacao.historicos_catraca.includes(:aluno, :processamento_acesso).order(data_hora: :desc).limit(100)
     end
   end
 end

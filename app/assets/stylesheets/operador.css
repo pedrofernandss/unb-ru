@@ -6,3 +6,9 @@
 .unidades-operacionais .opcao-cartao { margin-bottom: .75rem; }
 .contexto-operacao { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
 @media (max-width: 760px) { .ponto-grade { grid-template-columns: 1fr; } }
+.terminal-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.modos-validacao { display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem; border: 1px solid var(--cor-borda); border-radius: var(--raio); }
+.painel-de-resultado { display: flex; flex-direction: column; gap: 1rem; }
+.resultado--liberado { color: var(--cor-sucesso); background: var(--cor-sucesso-fundo); padding: 1rem; border-radius: var(--raio); }
+.resultado--bloqueado { color: var(--cor-erro); background: var(--cor-erro-fundo); padding: 1rem; border-radius: var(--raio); }
+@media (max-width: 760px) { .terminal-grade { grid-template-columns: 1fr; } }

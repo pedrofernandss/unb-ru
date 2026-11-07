@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_06_091000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_06_092000) do
   create_table "campi", force: :cascade do |t|
     t.integer "universidade_id", null: false
     t.string "nome", null: false
@@ -74,6 +74,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_091000) do
     t.index ["refeicao_id"], name: "index_inscricoes_fastpass_on_refeicao_id"
     t.index ["restaurante_id"], name: "index_inscricoes_fastpass_on_restaurante_id"
     t.index ["time_frame_id"], name: "index_inscricoes_fastpass_on_time_frame_id"
+  end
+
+  create_table "processamentos_acesso", force: :cascade do |t|
+    t.string "chave", null: false
+    t.integer "catraca_id", null: false
+    t.integer "aluno_id"
+    t.integer "historico_catraca_id"
+    t.integer "transacao_id"
+    t.string "matricula", null: false
+    t.string "modo", null: false
+    t.boolean "liberado", default: false, null: false
+    t.string "motivo", null: false
+    t.datetime "data_hora", null: false
+    t.datetime "comando_enviado_em"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["aluno_id"], name: "index_processamentos_acesso_on_aluno_id"
+    t.index ["catraca_id"], name: "index_processamentos_acesso_on_catraca_id"
+    t.index ["chave"], name: "index_processamentos_acesso_on_chave", unique: true
+    t.index ["historico_catraca_id"], name: "index_processamentos_acesso_on_historico_catraca_id", unique: true
+    t.index ["transacao_id"], name: "index_processamentos_acesso_on_transacao_id", unique: true
   end
 
   create_table "recargas", force: :cascade do |t|
@@ -183,6 +204,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_091000) do
   add_foreign_key "inscricoes_fastpass", "restaurantes"
   add_foreign_key "inscricoes_fastpass", "time_frames"
   add_foreign_key "inscricoes_fastpass", "users", column: "aluno_id"
+  add_foreign_key "processamentos_acesso", "catracas"
+  add_foreign_key "processamentos_acesso", "historicos_catraca", column: "historico_catraca_id"
+  add_foreign_key "processamentos_acesso", "transacoes"
+  add_foreign_key "processamentos_acesso", "users", column: "aluno_id"
   add_foreign_key "recargas", "transacoes"
   add_foreign_key "recargas", "users", column: "aluno_id"
   add_foreign_key "refeicoes", "restaurantes"

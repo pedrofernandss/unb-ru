@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     get "configuracao-de-ponto", to: "pontos_de_acesso#edit", as: :configuracao_de_ponto
     post "configuracao-de-ponto", to: "pontos_de_acesso#update"
     get "terminal-de-validacao", to: "validacoes#new", as: :terminal_de_validacao
+    post "terminal-de-validacao", to: "validacoes#create"
     get "historico-local", to: "historicos#index", as: :historico_local
   end
   get "admin/restaurantes", to: "paginas#em_construcao", as: :admin_restaurantes, defaults: { area: "Administração Geral" }

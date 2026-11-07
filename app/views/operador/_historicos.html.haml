@@ -11,8 +11,12 @@
           %tr
             %th Data e hora
             %th Matrícula
+            %th Modo
+            %th Resultado
         %tbody
           - historicos.each do |historico|
             %tr
               %td= l(historico.data_hora, format: :short)
               %td= historico.aluno.matricula
+              %td= historico.processamento_acesso&.modo || "—"
+              %td= historico.processamento_acesso&.resultado || "Registro anterior"
