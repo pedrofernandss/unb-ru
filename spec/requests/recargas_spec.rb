@@ -30,7 +30,7 @@ RSpec.describe "Recargas", type: :request do
     end
   end
 
-  ["0", "51", "1.5", "-1", "abc", ""].each do |quantidade|
+  [ "0", "51", "1.5", "-1", "abc", "" ].each do |quantidade|
     it "recusa quantidade inválida #{quantidade.inspect} no servidor" do
       iniciar(quantidade: quantidade)
       expect(response).to have_http_status(:unprocessable_entity)
@@ -40,7 +40,7 @@ RSpec.describe "Recargas", type: :request do
     end
   end
 
-  [1, 50].each do |quantidade|
+  [ 1, 50 ].each do |quantidade|
     it "aceita quantidade personalizada no limite #{quantidade}" do
       recarga = iniciar(outra_quantidade: quantidade.to_s)
       expect(recarga.quantidade).to eq(quantidade)
