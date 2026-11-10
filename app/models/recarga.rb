@@ -37,6 +37,6 @@ class Recarga < ApplicationRecord
   end
 
   def calcular_valor
-    self.valor = quantidade.to_i * TarifaRefeicao.valor
+    self.valor = quantidade.to_i * TarifaRefeicao.referencia
   end
 end

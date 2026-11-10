@@ -16,7 +16,7 @@
           %label.opcao-cartao
             = radio_button_tag :quantidade, quantidade, @recarga.quantidade == quantidade
             %strong #{quantidade} Refeições
-            %span= number_to_currency(quantidade * TarifaRefeicao.valor)
+            %span= number_to_currency(quantidade * @tarifa_referencia)
     .campo
       = label_tag :outra_quantidade, "Outra quantidade"
       = number_field_tag :outra_quantidade, params[:outra_quantidade], min: 1, max: 50, step: 1, class: "campo__controle"
@@ -32,7 +32,15 @@
           %strong Cartão de Crédito
   %aside.card.painel.resumo-recarga
     %h2 Resumo da Recarga
-    %p Tarifa unitária
-    %strong= number_to_currency(TarifaRefeicao.valor)
+    %p Tarifa de referência do pacote
+    %strong= number_to_currency(@tarifa_referencia)
+    - if @turnos.any?
+      %p.painel__nota Cada turno tem seu próprio preço na catraca:
+      %ul.tarifas-por-turno
+        - @turnos.each do |turno|
+          %li
+            %span= turno.nome
+            %strong= number_to_currency(turno.tarifa)
+      %p.painel__nota O pacote é cobrado pela maior tarifa, então ele cobre refeições de qualquer turno. O que sobrar em um turno mais barato fica como saldo.
     %p Confira a quantidade, o método e o total na próxima etapa antes de concluir o pagamento.
     = submit_tag "Confirmar", class: "botao botao--primario botao--largo"

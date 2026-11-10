@@ -1,6 +1,7 @@
 module Estudante
   class RecargasController < BaseController
     before_action :exigir_aluno
+    before_action :carregar_tarifas, only: %i[new create]
 
     def new
       @recarga = Recarga.new(quantidade: 5, metodo: "PIX")
@@ -43,6 +44,13 @@ module Estudante
     private
 
     def verificador = Rails.application.message_verifier(:recarga)
+
+    # O pacote é cobrado pela tarifa de referência; a lista de turnos deixa
+    # visível que cada refeição tem seu próprio preço na catraca.
+    def carregar_tarifas
+      @turnos = TipoRefeicao.order(:hora_inicio)
+      @tarifa_referencia = TarifaRefeicao.referencia
+    end
 
     def exigir_aluno
       head :forbidden unless current_user.aluno?
