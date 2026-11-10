@@ -30,7 +30,9 @@ class ValidacaoDeAcesso
         elsif modo == "FastPass"
           RegraFastpass.motivo_bloqueio(aluno: aluno, catraca: catraca, turno: turno, agora: agora)
         end
-        motivo ||= "Saldo insuficiente" if aluno && aluno.saldo < TarifaRefeicao.valor
+        # Cada turno tem sua própria tarifa; o débito é sempre o do turno da leitura.
+        tarifa = TarifaRefeicao.do_turno(turno)
+        motivo ||= "Saldo insuficiente" if aluno && aluno.saldo < tarifa
         liberado = motivo.nil?
         evento = ProcessamentoAcesso.create!(chave: chave, catraca: catraca, aluno: aluno,
           matricula: matricula, modo: modo, data_hora: agora, liberado: liberado, motivo: motivo || "Validação concluída")
@@ -38,10 +40,10 @@ class ValidacaoDeAcesso
           evento.update!(historico_catraca: catraca.historicos_catraca.create!(aluno: aluno, data_hora: agora))
         end
         if liberado
-          aluno.update!(saldo: aluno.saldo - TarifaRefeicao.valor)
+          aluno.update!(saldo: aluno.saldo - tarifa)
           refeicao = catraca.restaurante.refeicoes.find_by(data: agora.to_date, tipo_refeicao: turno)
           evento.update!(transacao: aluno.transacoes.create!(catraca: catraca, restaurante: catraca.restaurante,
-            refeicao: refeicao, data_hora: agora, tipo: turno.nome, metodo: modo, valor: -TarifaRefeicao.valor))
+            refeicao: refeicao, data_hora: agora, tipo: turno.nome, metodo: modo, valor: -tarifa))
         end
       end
     end

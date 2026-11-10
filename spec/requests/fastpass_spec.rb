@@ -68,6 +68,32 @@ RSpec.describe "Validação FastPass", type: :request do
     expect(aluno.transacoes).to be_empty
   end
 
+  context "com um turno de tarifa menor" do
+    let!(:cafe) { TipoRefeicao.create!(nome: "Café da manhã", hora_inicio: "07:00", hora_fim: "09:30", tarifa: "2.50") }
+
+    before do
+      inscricao.update!(time_frame: cafe.time_frames.create!(inicio: "08:00", fim: "08:15"))
+      travel_to Time.zone.local(2026, 11, 6, 8, 5)
+    end
+
+    it "debita a tarifa do turno da leitura, e não um valor único" do
+      validar
+
+      expect(response.body).to include("ACESSO LIBERADO")
+      expect(aluno.reload.saldo).to eq(15.50)
+      expect(aluno.transacoes.sole).to have_attributes(valor: -2.50, tipo: "Café da manhã")
+    end
+
+    it "libera com saldo que cobre o café da manhã mas não cobriria o almoço" do
+      aluno.update!(saldo: 3)
+
+      validar
+
+      expect(response.body).to include("ACESSO LIBERADO")
+      expect(aluno.reload.saldo).to eq(0.50)
+    end
+  end
+
   it "recusa inscrição de outra data, mesmo no mesmo horário" do
     inscricao.update!(data: Date.new(2026, 11, 5))
     validar
