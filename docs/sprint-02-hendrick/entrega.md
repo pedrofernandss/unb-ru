@@ -9,7 +9,7 @@ Responsável: @Hendrickhmq. Implementação e validação locais em 6 e 7 de nov
 - PR #18 integrado à Sprint 1; cenários presentes na Sprint 2.
 - PR #27: `932e87e4d51f309514fbbf18ef14094664e5f797`; PR #28: `87843734258f364e83b389fbc4b99dc0c0937a80`. Dependências integradas somente no Git local para validar #15.
 - Nenhuma implementação publicada de terminal comum/histórico de Davi ou administração/PDF global de Lucas foi encontrada nas referências disponíveis. As falhas desses BDD foram preservadas e registradas.
-- Nenhum push, PR, merge remoto, alteração de issue, kanban ou Wiki foi realizado.
+- Na preparação local de 6 e 7/11, nenhum push, PR, merge remoto, alteração de issue, kanban ou Wiki foi realizado. A conferência para a publicação autorizada em 9/11 está em `revisao-publicacao-2026-11-09.md`.
 
 ## Plano executado e branches
 
