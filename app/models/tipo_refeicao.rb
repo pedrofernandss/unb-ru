@@ -1,4 +1,4 @@
-# Café da manhã, almoço ou jantar, com o horário em que é servido.
+# Café da manhã, almoço ou jantar, com o horário em que é servido e a tarifa cobrada.
 class TipoRefeicao < ApplicationRecord
   self.table_name = "tipos_refeicao"
 
@@ -9,6 +9,7 @@ class TipoRefeicao < ApplicationRecord
 
   validates :nome, presence: true, uniqueness: true
   validates :hora_inicio, :hora_fim, presence: true, unless: :horario_invalido?
+  validates :tarifa, numericality: { greater_than: 0 }
   validate :horario_reconhecido
   validate :fim_depois_do_inicio, :sem_sobreposicao, if: -> { hora_inicio && hora_fim }
 
