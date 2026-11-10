@@ -118,7 +118,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_091000) do
     t.time "hora_fim", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "tarifa", precision: 10, scale: 2, default: "4.5", null: false
     t.index ["nome"], name: "index_tipos_refeicao_on_nome", unique: true
+    t.check_constraint "tarifa > 0", name: "tipo_refeicao_tarifa_positiva"
   end
 
   create_table "transacoes", force: :cascade do |t|

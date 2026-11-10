@@ -61,6 +61,17 @@ RSpec.describe "Recargas", type: :request do
     expect(aluno.transacoes).to be_empty
   end
 
+  it "cobra o pacote pela maior tarifa vigente e mostra o preço de cada turno" do
+    TipoRefeicao.create!(nome: "Café da manhã", hora_inicio: "07:00", hora_fim: "09:30", tarifa: "2.50")
+    TipoRefeicao.create!(nome: "Almoço", hora_inicio: "11:00", hora_fim: "14:30", tarifa: "6.00")
+
+    get nova_recarga_path
+    expect(response.body).to include("Café da manhã", "R$ 2,50", "Almoço", "R$ 6,00")
+
+    recarga = iniciar(quantidade: "5")
+    expect(recarga.valor).to eq(30.00)
+  end
+
   it "deduplica o envio inicial da mesma operação" do
     get nova_recarga_path
     chave = Nokogiri::HTML(response.body).at_css('input[name="chave"]')["value"]
