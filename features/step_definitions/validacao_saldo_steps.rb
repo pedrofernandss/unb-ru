@@ -1,11 +1,4 @@
-Given('que um funcionário está logado no aplicativo') do
-  @funcionario = Employee.create!(
-    nome: 'Teste Funcionário',
-    matricula_func: '123456',
-    password: 'senha456'
-  )
-  login_as(@funcionario, scope: :employee)
-end
+# Given que um funcionário está logado no aplicativo já foi definido em historico_catraca_steps.rb
 
 Given('ele está na página de "Validação"') do
   visit validacao_path # substituir pela rota real, uma vez que ela for criada
@@ -15,7 +8,7 @@ Then('ele deve ver um painel intitulado {string}') do |titulo_catraca|
   expect(page).to have_content(titulo_catraca)
 end
 
-Then('uma sessão intitulada {string}') do |titulo_leitura|
+Then('uma seção intitulada {string}') do |titulo_leitura|
   expect(page).to have_content(titulo_leitura)
 end
 
