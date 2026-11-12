@@ -23,12 +23,15 @@ When('o QR code analisado está associado a uma conta com saldo insuficiente') d
 end
 
 When('o QR code analisado está associado a uma conta com saldo suficiente') do
+  @saldo_inicial = 50.0
   @estudante = User.create!(
     nome: 'Teste Com Saldo',
     matricula: '26100002',
-    password: 'senha123',
-    qr_code: 'QRCODE_002_CSALDO',
-    saldo: 20.0
+    password: 'senha1234',
+    password_confirmation: 'senha1234',
+    perfil: :aluno,
+    saldo: @saldo_inicial,
+    qr_code: 'QRCODE_002_CSALDO'
   )
 end
 
@@ -43,6 +46,5 @@ end
 
 Then('o preço da refeição deve ser descontado do saldo da conta do estudante') do
   @estudante.reload
-  preco_refeicao = 5.0
-  expect(@estudante.saldo).to eq(20.0 - preco_refeicao)
+  expect(@estudante.saldo).to eq(@saldo_inicial - User::PRECO_REFEICAO)
 end

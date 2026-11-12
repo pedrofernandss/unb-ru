@@ -45,4 +45,36 @@ class UserTest < ActiveSupport::TestCase
     assert users(:genaina).authenticate("senha123")
     assert_not users(:genaina).authenticate("errada")
   end
+
+  test "verifica corretamente se o usuário tem saldo suficiente" do
+    usuario_com_saldo = novo_usuario(saldo: User::PRECO_REFEICAO)
+    usuario_sem_saldo = novo_usuario(saldo: User::PRECO_REFEICAO - 0.01)
+
+    assert usuario_com_saldo.tem_saldo_suficiente?
+    assert_not usuario_sem_saldo.tem_saldo_suficiente?
+  end
+
+  test "debita o preço da refeição quando há saldo suficiente" do
+    usuario = novo_usuario(saldo: 20.0)
+    usuario.save!
+
+    assert usuario.debitar_refeicao!
+    assert_equal(20.0 - User::PRECO_REFEICAO, usuario.reload.saldo.to_f)
+  end
+
+  test "não debita e retorna falso quando o saldo é insuficiente" do
+    usuario = novo_usuario(saldo: 2.0)
+    usuario.save!
+
+    assert_not usuario.debitar_refeicao!
+    assert_equal 2.0, usuario.reload.saldo.to_f
+  end
+
+  test "qr_code deve ser único quando informado" do
+    novo_usuario(matricula: "2023000001", qr_code: "QR_UNICO_1").save!
+    duplicado = novo_usuario(matricula: "2023000002", qr_code: "QR_UNICO_1")
+
+    assert_not duplicado.valid?
+    assert duplicado.errors[:qr_code].any?
+  end
 end

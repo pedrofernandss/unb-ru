@@ -8,7 +8,7 @@ class User < ApplicationRecord
 
   enum :perfil, { aluno: "aluno", funcionario: "funcionario", administrador: "administrador" }, default: :aluno
 
-  PRECO_REFEICAO = 5.0
+  PRECO_REFEICAO = 4.50
 
   def tem_saldo_suficiente?
     saldo.to_f >= PRECO_REFEICAO

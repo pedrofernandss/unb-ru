@@ -80,9 +80,9 @@ end
 
 puts "Semeando funcionário e alunos para validação de saldo..."
 [
-  {nome: "Funcionário RU", matricula: "1234567", perfil: :funcionario},
-  {nome: "Estudante Sem Saldo", matricula: "26100001", perfil: :aluno, saldo: 0.0, qr_code: "QRCODE_001_SSALDO"},
-  {nome: "Estudante Com Saldo", matricula: "26100002", perfil: :aluno, saldo: 20.0, qr_code: "QRCODE_002_CSALDO"}
+  { nome: "Funcionário RU", matricula: "1234567", perfil: :funcionario },
+  { nome: "Estudante Sem Saldo", matricula: "26100001", perfil: :aluno, saldo: 0.0, qr_code: "QRCODE_001_SSALDO" },
+  { nome: "Estudante Com Saldo", matricula: "26100002", perfil: :aluno, saldo: 50.0, qr_code: "QRCODE_002_CSALDO" }
 ].each do |atributos|
 User.find_or_create_by!(matricula: atributos[:matricula]) do |u|
     u.assign_attributes(atributos.merge(password: "senha123"))
@@ -95,7 +95,7 @@ aluno_com_saldo.update!(
   nome: "Estudante Com Saldo",
   password: "senha1234",
   perfil: :aluno,
-  saldo: 20.0,
+  saldo: 50.0,
   qr_code: "QRCODE_002_CSALDO"
 )
 
