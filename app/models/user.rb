@@ -7,6 +7,19 @@ class User < ApplicationRecord
   has_secure_password
 
   enum :perfil, { aluno: "aluno", funcionario: "funcionario", administrador: "administrador" }, default: :aluno
+  
+  PRECO_REFEICAO = 5.0
+
+  def tem_saldo_suficiente?
+    saldo.to_f >= PRECO_REFEICAO
+  end
+
+  def debitar_refeicao!
+    return false unless tem_saldo_suficiente?
+
+    update!(saldo: saldo - PRECO_REFEICAO)
+    true
+  end
 
   # Relacionamentos de Aluno
   has_many :cartoes, foreign_key: :aluno_id, inverse_of: :aluno, dependent: :destroy

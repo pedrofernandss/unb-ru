@@ -17,7 +17,8 @@ When('o QR code analisado está associado a uma conta com saldo insuficiente') d
     nome: 'Teste Sem Saldo',
     matricula: '26100001',
     qr_code: 'QRCODE_001_SSALDO',
-    saldo: 0.0
+    saldo: 0.0,
+    perfil: :estudante
   )
 end
 
@@ -26,7 +27,8 @@ When('o QR code analisado está associado a uma conta com saldo suficiente') do
     nome: 'Teste Com Saldo',
     matricula: '26100002',
     qr_code: 'QRCODE_002_CSALDO',
-    saldo: 20.0
+    saldo: 20.0,
+    perfil: :estudante
   )
 end
 
