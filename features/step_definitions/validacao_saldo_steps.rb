@@ -16,9 +16,9 @@ When('o QR code analisado está associado a uma conta com saldo insuficiente') d
   @estudante = User.create!(
     nome: 'Teste Sem Saldo',
     matricula: '26100001',
+    password: 'senha123',
     qr_code: 'QRCODE_001_SSALDO',
-    saldo: 0.0,
-    perfil: :estudante
+    saldo: 0.0
   )
 end
 
@@ -26,15 +26,15 @@ When('o QR code analisado está associado a uma conta com saldo suficiente') do
   @estudante = User.create!(
     nome: 'Teste Com Saldo',
     matricula: '26100002',
+    password: 'senha123',
     qr_code: 'QRCODE_002_CSALDO',
-    saldo: 20.0,
-    perfil: :estudante
+    saldo: 20.0
   )
 end
 
 When('o funcionário tenta validar o QR Code do estudante') do
   fill_in 'QR Code', with: @estudante.qr_code
-  click_button 'Validar'
+  click_button 'Simular'
 end
 
 Then('o acesso da catraca para o restaurante deve ser {string} para a próxima passagem') do |status|

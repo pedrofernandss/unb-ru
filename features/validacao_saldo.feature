@@ -8,7 +8,7 @@ Funcionalidade: Catraca verifica o saldo do estudante antes de deixá-lo entrar
     Dado que um funcionário está logado no aplicativo
     E ele está na página de "Validação"
     Então ele deve ver um painel intitulado "Catraca Atual"
-    E uma seção intitulada "Leitura do QR code"
+    E uma seção intitulada "Leitura Ótica do QR code"
 
   Cenário: QR code analisado tem saldo insuficiente (caminho triste)
     Quando o QR code analisado está associado a uma conta com saldo insuficiente

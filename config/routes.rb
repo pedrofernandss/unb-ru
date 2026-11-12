@@ -16,9 +16,9 @@ Rails.application.routes.draw do
   get "configuracao-de-ponto", to: "paginas#em_construcao", as: :configuracao_de_ponto, defaults: { area: "Terminal Operacional" }
   get "admin/restaurantes", to: "paginas#em_construcao", as: :admin_restaurantes, defaults: { area: "Administração Geral" }
 
-  #Página de validação de saldo
-  get "validacao", to: "validacoes#new", as: :validacao
-  post "validacao", to: "validacoes#create"
+  # Página de validação de saldo
+  get "validacao", to: "validacao#new", as: :validacao
+  post "validacao", to: "validacao#create"
 
   # Portal do Estudante
   scope module: :estudante do
