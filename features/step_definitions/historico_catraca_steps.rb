@@ -2,7 +2,7 @@ Given('que um funcionário está logado no aplicativo') do
   @funcionario = User.create!(
     nome: 'Teste Funcionário',
     matricula: '1234567',
-    password: 'senha4567',
+    password: 'senha123',
     perfil: :funcionario,
     catraca: nil
   )

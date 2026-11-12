@@ -1,23 +1,34 @@
 <div id="painel-catraca">
   <h1>Catraca Atual</h1>
 
-  <%#Seção de leitura do QR Code %>
   <section id="leitura-qrcode">
     <h2>Leitura Ótica do QR code</h2>
 
+    <div class="simulacao-botoes" style="margin-bottom: 1rem;">
+      <%= button_to "Simular com saldo",
+                    validacao_path,
+                    method: :post,
+                    params: { qr_code: "QRCODE_002_CSALDO" } %>
+
+      <%= button_to "Simular sem saldo",
+                    validacao_path,
+                    method: :post,
+                    params: { qr_code: "QRCODE_001_SSALDO" } %>
+    </div>
+
+    <%# Mantido para compatibilidade com a leitura real e com os testes do Cucumber %>
     <%= form_with url: validacao_path, method: :post, local: true do |form| %>
       <div>
-        <%= form.label :qr_code, 'QR Code' %>
-        <%= form.text_field :qr_code, autofocus: true, placeholder: 'Aguardando leitura do QR Code' %>
+        <%= form.label :qr_code, "QR Code" %>
+        <%= form.text_field :qr_code, autofocus: true, placeholder: "Aguardando leitura do QR Code" %>
       </div>
 
-      <%= form.submit 'Simular' %>
+      <%= form.submit "Simular" %>
     <% end %>
   </section>
 
   <hr>
 
-  <%#Status da Catraca e Informações do Aluno que passou %>
   <section id="status-acesso">
     <h2>Status de Acesso</h2>
 
@@ -25,33 +36,19 @@
       Status: <strong><%= @status_catraca %></strong>
     </div>
 
-    <% if @mensagem.present? %>
-      <p><%= @mensagem %></p>
+    <% if @mensagem_status.present? %>
+      <p><%= @mensagem_status %></p>
     <% end %>
 
     <% if @estudante.present? %>
       <div id="dados-estudante">
         <h3>Informações do Aluno</h3>
         <ul>
-          <li><strong>Identificação do estudante:</strong> <%= @estudante.nome %></li>
+          <li><strong>Nome:</strong> <%= @estudante.nome %></li>
           <li><strong>Matrícula:</strong> <%= @estudante.matricula %></li>
-          <li><strong>Saldo Restante:</strong> <%= number_to_currency(@estudante.saldo, unit: 'R$ ', separator: ',', delimiter: '.') %></li>
+          <li><strong>Saldo Atual:</strong> <%= number_to_currency(@estudante.saldo, unit: "R$ ", separator: ",", delimiter: ".") %></li>
         </ul>
       </div>
     <% end %>
-
-  <%# Botões de simulação rápida de aluno com e sem saldo %>
-  <div class="simulador-botoes">
-    <p><strong>Simulador de leituras:</strong></p>
-
-    <%= button_to 'Simular OK',
-                  validacao_path,
-                  method: :post,
-                  params: { qr_code: 'QRCODE_002_CSALDO' } %>
-
-    <%= button_to 'Simular Sem Saldo',
-                  validacao_path,
-                  method: :post,
-                  params: { qr_code: 'QRCODE_001_SSALDO' } %>
-  </div>
+  </section>
 </div>
