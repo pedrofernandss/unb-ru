@@ -93,7 +93,7 @@
         %tbody
           - @relatorio.acessos.each do |acesso|
             %tr
-              %td.tabela__data= l(acesso.data_hora)
+              %td= l(acesso.data_hora)
               %td= acesso.catraca.restaurante.nome
               %td= acesso.catraca.identificacao
               %td= acesso.aluno.matricula
