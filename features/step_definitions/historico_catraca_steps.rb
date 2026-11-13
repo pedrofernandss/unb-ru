@@ -26,7 +26,7 @@ When('o funcionário está gerindo uma catraca') do
   universidade = Universidade.first || Universidade.create!(nome: 'Universidade de Brasília')
   campus = Campus.first || Campus.create!(nome: 'Darcy Ribeiro', universidade: universidade)
   restaurante = Restaurante.first || Restaurante.create!(nome: 'RU Darcy Ribeiro', campus: campus)
-  
+
   @catraca = Catraca.create!(
     numero: '04',
     piso: '2',

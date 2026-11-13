@@ -1,7 +1,7 @@
 module Funcionario
   class HistoricoLocalController < ApplicationController
     before_action :verificar_funcionario!
-    
+
     def index
       @catraca = current_user.catraca
       @acessos = if @catraca
@@ -12,10 +12,10 @@ module Funcionario
     end
 
     private
-    
+
     def verificar_funcionario!
       unless current_user&.funcionario?
-        redirect_to root_path, alert: "Acesso não autorizado!"  
+        redirect_to root_path, alert: "Acesso não autorizado!"
       end
     end
   end
