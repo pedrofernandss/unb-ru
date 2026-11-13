@@ -26,6 +26,13 @@ RSpec.describe "Relatório global de acessos", type: :request do
       expect(response.body).not_to include(aluno.matricula)
     end
 
+    it "oferece só as catracas do restaurante filtrado" do
+      Restaurante.create!(nome: "RU Gama", numero_de_pisos: 1).catracas.create!(numero: 7, piso: 1)
+      get admin_relatorio_path, params: { restaurante_id: darcy.id }
+      expect(response.body).to include("Catraca 04")
+      expect(response.body).not_to include("Catraca 07")
+    end
+
     it "exporta o PDF com os filtros aplicados" do
       get admin_exportar_relatorio_path, params: { restaurante_id: darcy.id }
       expect(response.media_type).to eq("application/pdf")

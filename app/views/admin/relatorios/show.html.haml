@@ -18,7 +18,7 @@
       = icon :eraser
       Limpar filtros
 
-  = form_with url: admin_relatorio_path, method: :get, class: "filtros-de-auditoria__formulario" do |f|
+  = form_with url: admin_relatorio_path, method: :get, class: "filtros-de-auditoria__formulario", data: { controller: "catracas-do-restaurante" } do |f|
     .campo
       = f.label :data_inicial, "Data Inicial"
       = f.date_field :data_inicial, value: @relatorio.data_inicial, class: "campo__controle"
@@ -27,10 +27,10 @@
       = f.date_field :data_final, value: @relatorio.data_final, class: "campo__controle"
     .campo
       = f.label :restaurante_id, "Restaurante"
-      = f.select :restaurante_id, options_from_collection_for_select(Restaurante.order(:nome), :id, :nome, @relatorio.restaurante_id), { include_blank: "Todos os restaurantes" }, class: "campo__controle"
+      = f.select :restaurante_id, options_from_collection_for_select(Restaurante.order(:nome), :id, :nome, @relatorio.restaurante_id), { include_blank: "Todos os restaurantes" }, class: "campo__controle", data: { catracas_do_restaurante_target: "restaurante", action: "catracas-do-restaurante#filtrar" }
     .campo
       = f.label :catraca_id, "Catraca"
-      = f.select :catraca_id, grouped_options_for_select(opcoes_de_catraca, @relatorio.catraca_id), { include_blank: "Todas as catracas" }, class: "campo__controle"
+      = f.select :catraca_id, opcoes_de_catraca(@relatorio), { include_blank: "Todas as catracas" }, class: "campo__controle", data: { catracas_do_restaurante_target: "catraca" }
     .filtros-de-auditoria__acao
       = f.button "Filtrar", class: "botao botao--primario"
 
