@@ -44,7 +44,7 @@ RSpec.describe "Recargas", type: :request do
     it "aceita quantidade personalizada no limite #{quantidade}" do
       recarga = iniciar(outra_quantidade: quantidade.to_s)
       expect(recarga.quantidade).to eq(quantidade)
-      expect(recarga.valor).to eq(quantidade * TarifaRefeicao.valor)
+      expect(recarga.valor).to eq(quantidade * TarifaRefeicao.referencia)
     end
   end
 
