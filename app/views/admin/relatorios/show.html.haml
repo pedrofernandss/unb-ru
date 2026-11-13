@@ -1,0 +1,103 @@
+- content_for :title, "Relatório Global de Operação · RU UnB"
+
+.pagina-cabecalho
+  .pagina-cabecalho__texto
+    %p.sobretitulo Administração Geral · Auditoria
+    %h1 Relatório Global de Operação
+  .pagina-cabecalho__acoes
+    = button_to admin_exportar_relatorio_path, method: :get, params: @relatorio.parametros, class: "botao botao--primario", form: { data: { turbo: false } } do
+      = icon :file_down
+      Exportar PDF Oficial
+
+.card.filtros-de-auditoria
+  .filtros-de-auditoria__cabecalho
+    %h2
+      = icon :filter
+      Filtros
+    = link_to admin_relatorio_path, class: "ligacao-discreta" do
+      = icon :eraser
+      Limpar filtros
+
+  = form_with url: admin_relatorio_path, method: :get, class: "filtros-de-auditoria__formulario" do |f|
+    .campo
+      = f.label :data_inicial, "Data Inicial"
+      = f.date_field :data_inicial, value: @relatorio.data_inicial, class: "campo__controle"
+    .campo
+      = f.label :data_final, "Data Final"
+      = f.date_field :data_final, value: @relatorio.data_final, class: "campo__controle"
+    .campo
+      = f.label :restaurante_id, "Restaurante"
+      = f.select :restaurante_id, options_from_collection_for_select(Restaurante.order(:nome), :id, :nome, @relatorio.restaurante_id), { include_blank: "Todos os restaurantes" }, class: "campo__controle"
+    .campo
+      = f.label :catraca_id, "Catraca"
+      = f.select :catraca_id, grouped_options_for_select(opcoes_de_catraca, @relatorio.catraca_id), { include_blank: "Todas as catracas" }, class: "campo__controle"
+    .filtros-de-auditoria__acao
+      = f.button "Filtrar", class: "botao botao--primario"
+
+.indicadores
+  .card.indicador
+    .indicador__topo
+      %span.indicador__rotulo Total de refeições servidas
+      %span.indicador__icone.indicador__icone--azul= icon :utensils
+    %strong.indicador__valor
+      %span.total-refeicoes= @relatorio.refeicoes_servidas
+      %small de #{pluralize(@relatorio.total_acessos, "acesso")}
+  .card.indicador
+    .indicador__topo
+      %span.indicador__rotulo Arrecadação global
+      %span.indicador__icone.indicador__icone--verde= icon :banknote
+    %strong.indicador__valor.indicador__valor--verde.arrecadacao-global= number_to_currency(@relatorio.arrecadacao)
+  .card.indicador
+    .indicador__topo
+      %span.indicador__rotulo Acessos via FastPass
+      %span.indicador__icone.indicador__icone--azul= icon :qr_code
+    %strong.indicador__valor= @relatorio.acessos_fastpass
+
+%section.card.painel
+  %h2.painel__titulo Consolidação Operacional dos Restaurantes
+  .tabela-rolavel
+    %table.tabela.consolidacao
+      %thead
+        %tr
+          %th Unidade
+          %th.tabela__numerico Acessos liberados
+          %th.tabela__numerico Bloqueados
+          %th.tabela__numerico FastPass
+          %th.tabela__numerico Arrecadação
+      %tbody
+        - @relatorio.consolidacao.each do |linha|
+          %tr
+            %td= linha.restaurante.nome
+            %td.tabela__numerico.acessos= linha.liberados
+            %td.tabela__numerico= linha.acessos - linha.liberados
+            %td.tabela__numerico= linha.fastpass
+            %td.tabela__numerico.arrecadacao= number_to_currency(linha.arrecadacao)
+
+%section.card.painel
+  %h2.painel__titulo Acessos registrados
+  - if @relatorio.valid? && @relatorio.acessos.none?
+    .estado-vazio
+      %p Nenhum acesso encontrado para os filtros selecionados
+  - else
+    .tabela-rolavel
+      %table.tabela.acessos
+        %thead
+          %tr
+            %th Data e hora
+            %th Restaurante
+            %th Catraca
+            %th Matrícula
+            %th Modalidade
+            %th Status
+            %th.tabela__numerico Valor
+        %tbody
+          - @relatorio.acessos.each do |acesso|
+            %tr
+              %td.tabela__data= l(acesso.data_hora)
+              %td= acesso.catraca.restaurante.nome
+              %td= acesso.catraca.identificacao
+              %td= acesso.aluno.matricula
+              %td= acesso.modo_validacao
+              %td
+                %span.etiqueta{class: acesso.status == "Liberado" ? "etiqueta--sucesso" : "etiqueta--bloqueado"}= acesso.status
+              %td.tabela__numerico= number_to_currency(acesso.tarifa)

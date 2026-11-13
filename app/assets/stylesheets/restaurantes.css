@@ -107,3 +107,8 @@
 .catraca strong {
   font-size: 0.875rem;
 }
+
+.etiqueta--bloqueado {
+  color: var(--cor-erro);
+  background: var(--cor-erro-fundo);
+}

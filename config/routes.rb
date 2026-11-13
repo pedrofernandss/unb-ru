@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :restaurantes, except: :show
     resources :catracas, only: %i[new create destroy]
+    get "relatorio", to: "relatorios#show", as: :relatorio
+    get "relatorio/exportar", to: "relatorios#exportar", as: :exportar_relatorio
     resources :turnos, only: %i[index edit update] do
       patch :configurar_time_frames, on: :collection
     end
