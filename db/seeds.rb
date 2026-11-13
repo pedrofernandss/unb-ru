@@ -17,6 +17,7 @@ end
 puts "Semeando catracas..."
 restaurantes.each_with_index do |restaurante, indice|
   pisos = indice.zero? ? [ 1, 1, 2, 2 ] : [ 1, 1 ]
+  restaurante.update!(numero_de_pisos: pisos.max) if restaurante.numero_de_pisos < pisos.max
   pisos.each_with_index do |piso, i|
     restaurante.catracas.find_or_create_by!(numero: i + 1) { |c| c.piso = piso }
   end

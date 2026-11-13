@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_120001) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_13_100000) do
   create_table "campi", force: :cascade do |t|
     t.integer "universidade_id", null: false
     t.string "nome", null: false
@@ -87,11 +87,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_120001) do
   end
 
   create_table "restaurantes", force: :cascade do |t|
-    t.integer "campus_id", null: false
+    t.integer "campus_id"
     t.string "nome", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "numero_de_pisos", default: 1, null: false
     t.index ["campus_id"], name: "index_restaurantes_on_campus_id", unique: true
+    t.index ["nome"], name: "index_restaurantes_on_nome", unique: true
   end
 
   create_table "time_frames", force: :cascade do |t|
