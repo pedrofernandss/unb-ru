@@ -3,6 +3,7 @@ class HistoricoCatraca < ApplicationRecord
 
   belongs_to :catraca
   belongs_to :aluno, class_name: "User", inverse_of: :historicos_catraca
+  has_one :processamento_acesso, dependent: :nullify
 
   validates :data_hora, presence: true
 end

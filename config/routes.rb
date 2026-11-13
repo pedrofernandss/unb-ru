@@ -13,12 +13,25 @@ Rails.application.routes.draw do
   delete "logout", to: "sessions#destroy", as: :logout
 
   # Páginas iniciais do funcionário (US05) e do administrador (US08), ainda em construção.
-  get "configuracao-de-ponto", to: "paginas#em_construcao", as: :configuracao_de_ponto, defaults: { area: "Terminal Operacional" }
+  scope module: :operador do
+    get "configuracao-de-ponto", to: "pontos_de_acesso#edit", as: :configuracao_de_ponto
+    post "configuracao-de-ponto", to: "pontos_de_acesso#update"
+    get "terminal-de-validacao", to: "validacoes#new", as: :terminal_de_validacao
+    post "terminal-de-validacao", to: "validacoes#create"
+    get "historico-local", to: "historicos#index", as: :historico_local
+  end
   get "admin/restaurantes", to: "paginas#em_construcao", as: :admin_restaurantes, defaults: { area: "Administração Geral" }
 
   # Página de validação de saldo
   get "validacao", to: "validacao#new", as: :validacao
   post "validacao", to: "validacao#create"
+  
+  # Administração Geral
+  namespace :admin do
+    resources :turnos, only: %i[index edit update] do
+      patch :configurar_time_frames, on: :collection
+    end
+  end
 
   # Portal do Estudante
   scope module: :estudante do
@@ -30,6 +43,12 @@ Rails.application.routes.draw do
     get "extrato", to: "extratos#show", as: :extrato
     get "extrato/exportar", to: "extratos#exportar", as: :exportar_extrato
     get "extrato/comprovantes/:id", to: "extratos#comprovante", as: :comprovante_extrato
+
+    # Sorteio do FastPass (US13)
+    get "fastpass-home", to: "fastpass#show", as: :fastpass
+    scope "fastpass", as: "fastpass" do
+      resources :inscricoes, controller: "inscricoes_fastpass", only: %i[create destroy]
+    end
   end
 
   if Rails.env.local?
