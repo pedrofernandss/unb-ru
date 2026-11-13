@@ -11,7 +11,7 @@ end
 Given('existe o restaurante {string} com {int} pisos e as seguintes catracas:') do |nome, pisos, table|
   restaurante = Restaurante.create!(nome: nome, numero_de_pisos: pisos)
   table.hashes.each do |linha|
-    restaurante.catracas.create!(nome: linha['nome'], piso: linha['piso'].to_i)
+    restaurante.catracas.create!(numero: linha['numero'].to_i, piso: linha['piso'].to_i)
   end
 end
 
