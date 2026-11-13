@@ -7,12 +7,12 @@ Funcionalidade: Relatório Global de Acessos
   Contexto:
     Dado que eu estou logado como um administrador
     E existe o restaurante "RU Darcy Ribeiro" com 3 pisos e as seguintes catracas:
-      | nome       | piso |
-      | Catraca 01 | 1    |
-      | Catraca 04 | 2    |
+      | numero | piso |
+      | 1      | 1    |
+      | 4      | 2    |
     E existe o restaurante "RU Gama" com 1 pisos e as seguintes catracas:
-      | nome       | piso |
-      | Catraca 01 | 1    |
+      | numero | piso |
+      | 1      | 1    |
     E existem os seguintes acessos registrados:
       | data_hora        | restaurante      | catraca    | matricula | modalidade | status    | valor |
       | 15/10/2026 12:05 | RU Darcy Ribeiro | Catraca 01 | 221045999 | Comum      | Liberado  | 4.50  |

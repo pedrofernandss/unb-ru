@@ -26,7 +26,7 @@
         %nav.navegacao{"aria-label": "Administração Geral"}
           = link_to "Restaurantes e Catracas", admin_restaurantes_path, class: ("ativo" if current_page?(admin_restaurantes_path))
           = link_to "Turnos e Time-frames", admin_turnos_path, class: ("ativo" if request.path.start_with?(admin_turnos_path))
-          = link_to "Relatório Global", "/admin/relatorio"
+          = link_to "Relatório Global", admin_relatorio_path, class: ("ativo" if request.path.start_with?(admin_relatorio_path))
 
         .cabecalho-portal__usuario
           .usuario-resumo
