@@ -18,6 +18,7 @@ gem "stimulus-rails"
 gem "jbuilder"
 
 gem "haml-rails"
+gem "prawn", "~> 2.5"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.7"
@@ -59,6 +60,7 @@ group :development, :test do
 
   # Os step definitions em features/ usam `expect(...).to` do RSpec.
   gem 'rspec-expectations'
+  gem "rspec-rails", "~> 8.0"
 
   gem 'database_cleaner'
 
@@ -70,6 +72,7 @@ group :development do
 end
 
 group :test do
+  gem "pdf-reader", "~> 2.15", require: "pdf/reader"
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
