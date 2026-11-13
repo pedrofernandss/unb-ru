@@ -10,13 +10,49 @@ pt-BR:
         matricula: "Matrícula"
         password: "Senha"
         password_confirmation: "Confirmação de senha"
+      restaurante:
+        nome: "Nome da Unidade"
+        numero_de_pisos: "Número de Pisos"
+      catraca:
+        numero: "Número da Catraca"
+        piso: "Piso"
+        restaurante: "Restaurante"
     errors:
+      messages:
+        restrict_dependent_destroy:
+          has_many: "Não é possível excluir porque existem %{record} dependentes"
       models:
         user:
           attributes:
             matricula:
               formato_matricula: "deve conter apenas números (7 a 12 dígitos)"
               taken: "já está cadastrada"
+        restaurante:
+          attributes:
+            numero_de_pisos:
+              abaixo_das_catracas: "não pode ser menor que %{piso}, o piso mais alto com catraca"
+            base:
+              nome_em_uso: "Já existe um restaurante com esse nome"
+              restrict_dependent_destroy:
+                has_many: "Remova as catracas antes de excluir o restaurante"
+        catraca:
+          attributes:
+            base:
+              numero_em_uso: "Já existe uma catraca com esse número neste restaurante"
+            restaurante:
+              required: "deve ser selecionado"
+            piso:
+              fora_do_restaurante: "deve estar entre 1 e %{maximo}"
+        tipo_refeicao:
+          attributes:
+            base:
+              horario_invalido: "Horário inválido"
+              fim_antes_do_inicio: "O horário final deve ser posterior ao inicial"
+              sobreposicao: "O horário do %{turno} se sobrepõe ao turno %{outro}"
+              granularidade_nao_numerica: "A granularidade deve ser um número"
+              granularidade_nao_positiva: "A granularidade deve ser maior que 0"
+              granularidade_nao_divide: "A granularidade deve dividir a duração do turno (%{duracao} min)"
+              tolerancia_invalida: "A tolerância deve ser um número inteiro maior ou igual a 0"
   errors:
     format: "%{attribute} %{message}"
     messages:
@@ -27,6 +63,10 @@ pt-BR:
       too_short: "é muito curto(a) (mínimo: %{count} caracteres)"
       too_long: "é muito longo(a) (máximo: %{count} caracteres)"
       password_too_long: "é muito longa (máximo: 72 caracteres)"
+      required: "é obrigatório(a)"
+      not_a_number: "deve ser um número"
+      not_an_integer: "deve ser um número inteiro"
+      greater_than: "deve ser maior que %{count}"
   helpers:
     submit:
       create: "Criar %{model}"

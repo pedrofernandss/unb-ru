@@ -10,6 +10,6 @@ def restaurante_de_teste(nome)
   Restaurante.find_by(nome: nome) || begin
     universidade = Universidade.find_or_create_by!(nome: "Universidade de Brasília")
     campus = universidade.campi.find_or_create_by!(nome: nome.delete_prefix("RU "))
-    campus.restaurante || Restaurante.create!(campus: campus, nome: nome)
+    campus.restaurante || Restaurante.create!(campus: campus, nome: nome, numero_de_pisos: 3)
   end
 end

@@ -7,9 +7,9 @@ Funcionalidade: Gestão de Restaurantes e Catracas
   Contexto:
     Dado que eu estou logado como um administrador
     E existe o restaurante "RU Darcy Ribeiro" com 3 pisos e as seguintes catracas:
-      | nome       | piso |
-      | Catraca 01 | 1    |
-      | Catraca 02 | 1    |
+      | numero | piso |
+      | 1      | 1    |
+      | 2      | 1    |
 
   Cenário: Cadastrar um novo restaurante
     Dado que eu acesso a página de gestão de restaurantes
@@ -62,7 +62,7 @@ Funcionalidade: Gestão de Restaurantes e Catracas
     Dado que eu acesso a página de gestão de restaurantes
     Quando eu clico no botão "Associar Nova Catraca"
     E eu seleciono "RU Darcy Ribeiro" no campo "Restaurante"
-    E eu preencho o campo "Nome da Catraca" com "Catraca 04"
+    E eu preencho o campo "Número da Catraca" com "4"
     E eu preencho o campo "Piso" com "2"
     E eu clico no botão "Salvar"
     Então eu devo ver a mensagem "Catraca associada com sucesso"
@@ -72,7 +72,7 @@ Funcionalidade: Gestão de Restaurantes e Catracas
     Dado que eu acesso a página de gestão de restaurantes
     Quando eu clico no botão "Associar Nova Catraca"
     E eu seleciono "RU Darcy Ribeiro" no campo "Restaurante"
-    E eu preencho o campo "Nome da Catraca" com "Catraca 04"
+    E eu preencho o campo "Número da Catraca" com "4"
     E eu preencho o campo "Piso" com "<piso>"
     E eu clico no botão "Salvar"
     Então eu devo ver a mensagem "<mensagem>"
@@ -83,14 +83,14 @@ Funcionalidade: Gestão de Restaurantes e Catracas
       | 4    | Piso deve estar entre 1 e 3               |
       | dois | Piso deve ser um número                   |
 
-  Cenário: Associar catraca com nome repetido no mesmo restaurante
+  Cenário: Associar catraca com número repetido no mesmo restaurante
     Dado que eu acesso a página de gestão de restaurantes
     Quando eu clico no botão "Associar Nova Catraca"
     E eu seleciono "RU Darcy Ribeiro" no campo "Restaurante"
-    E eu preencho o campo "Nome da Catraca" com "Catraca 01"
+    E eu preencho o campo "Número da Catraca" com "1"
     E eu preencho o campo "Piso" com "1"
     E eu clico no botão "Salvar"
-    Então eu devo ver a mensagem "Já existe uma catraca com esse nome neste restaurante"
+    Então eu devo ver a mensagem "Já existe uma catraca com esse número neste restaurante"
 
   Cenário: Remover uma catraca
     Dado que eu acesso a página de gestão de restaurantes
