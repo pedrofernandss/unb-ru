@@ -38,7 +38,8 @@ RSpec.describe "Validação FastPass", type: :request do
     expect(transacao.catraca).to eq(catraca)
     expect(transacao.restaurante).to eq(restaurante)
     expect(transacao.metodo).to eq("FastPass")
-    expect(catraca.historicos_catraca.count).to eq(1)
+    expect(catraca.historicos_catraca.sole).to have_attributes(modo_validacao: "FastPass", status: "Liberado",
+      tarifa: 4.50, motivo: "Validação concluída")
     expect(@comandos.map { |c| c[:comando] }).to eq([ :liberar ])
   end
 
@@ -66,6 +67,9 @@ RSpec.describe "Validação FastPass", type: :request do
     expect(response.body).to include("ACESSO BLOQUEADO", "Saldo insuficiente")
     expect(aluno.reload.saldo).to eq(2)
     expect(aluno.transacoes).to be_empty
+    # O bloqueio também é histórico: sem isso o relatório global (#9) conta como refeição servida.
+    expect(catraca.historicos_catraca.sole).to have_attributes(modo_validacao: "FastPass", status: "Bloqueado",
+      tarifa: 0, motivo: "Saldo insuficiente")
   end
 
   context "com um turno de tarifa menor" do
@@ -82,6 +86,7 @@ RSpec.describe "Validação FastPass", type: :request do
       expect(response.body).to include("ACESSO LIBERADO")
       expect(aluno.reload.saldo).to eq(15.50)
       expect(aluno.transacoes.sole).to have_attributes(valor: -2.50, tipo: "Café da manhã")
+      expect(catraca.historicos_catraca.sole).to have_attributes(status: "Liberado", tarifa: 2.50)
     end
 
     it "libera com saldo que cobre o café da manhã mas não cobriria o almoço" do

@@ -37,7 +37,12 @@ class ValidacaoDeAcesso
         evento = ProcessamentoAcesso.create!(chave: chave, catraca: catraca, aluno: aluno,
           matricula: matricula, modo: modo, data_hora: agora, liberado: liberado, motivo: motivo || "Validação concluída")
         if aluno
-          evento.update!(historico_catraca: catraca.historicos_catraca.create!(aluno: aluno, data_hora: agora))
+          # Projeção de leitura de #7/#9, gravada na mesma transação da decisão:
+          # o histórico local e o relatório global leem estes campos direto,
+          # sem passar por ProcessamentoAcesso.
+          evento.update!(historico_catraca: catraca.historicos_catraca.create!(aluno: aluno, data_hora: agora,
+            modo_validacao: modo, status: liberado ? "Liberado" : "Bloqueado",
+            tarifa: liberado ? tarifa : 0, motivo: evento.motivo))
         end
         if liberado
           aluno.update!(saldo: aluno.saldo - tarifa)
