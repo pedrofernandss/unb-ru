@@ -1,13 +1,19 @@
 Given('existem os seguintes acessos registrados:') do |table|
   table.hashes.each do |linha|
     restaurante = Restaurante.find_by!(nome: linha['restaurante'])
-    Acesso.create!(
-      catraca: restaurante.catracas.find_by!(nome: linha['catraca']),
-      matricula: linha['matricula'],
-      data_hora: DateTime.strptime(linha['data_hora'], '%d/%m/%Y %H:%M'),
-      modalidade: linha['modalidade'],
+    catraca = restaurante.catracas.find { |c| c.identificacao == linha['catraca'] }
+    aluno = User.find_or_create_by!(matricula: linha['matricula']) do |u|
+      u.nome = "Aluno #{linha['matricula']}"
+      u.password = 'senha123'
+    end
+
+    HistoricoCatraca.create!(
+      catraca: catraca,
+      aluno: aluno,
+      data_hora: Time.zone.strptime(linha['data_hora'], '%d/%m/%Y %H:%M'),
+      modo_validacao: linha['modalidade'],
       status: linha['status'],
-      valor: linha['valor'].to_d
+      tarifa: linha['valor'].to_d
     )
   end
 end
