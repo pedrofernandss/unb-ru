@@ -23,12 +23,16 @@ restaurantes.each_with_index do |restaurante, indice|
 end
 
 puts "Semeando tipos de refeição..."
+# A tarifa é por turno: o café da manhã é mais barato que almoço e jantar,
+# como o histórico do aluno de exemplo mais abaixo já mostrava.
 tipos = {
-  "cafe_da_manha" => [ "Café da manhã", "07:00", "09:30" ],
-  "almoco" => [ "Almoço", "11:00", "14:30" ],
-  "jantar" => [ "Jantar", "17:00", "19:30" ]
-}.to_h do |chave, (nome, inicio, fim)|
-  [ chave, TipoRefeicao.find_or_create_by!(nome: nome) { |t| t.hora_inicio = inicio; t.hora_fim = fim } ]
+  "cafe_da_manha" => [ "Café da manhã", "07:00", "09:30", "2.50" ],
+  "almoco" => [ "Almoço", "11:00", "14:30", "4.50" ],
+  "jantar" => [ "Jantar", "17:00", "19:30", "4.50" ]
+}.to_h do |chave, (nome, inicio, fim, tarifa)|
+  tipo = TipoRefeicao.find_or_initialize_by(nome: nome)
+  tipo.update!(hora_inicio: inicio, hora_fim: fim, tarifa: tarifa)
+  [ chave, tipo ]
 end
 
 puts "Semeando usuários (senha de todos: senha123)..."

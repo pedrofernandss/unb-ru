@@ -22,8 +22,13 @@ Rails.application.routes.draw do
 
   # Portal do Estudante
   scope module: :estudante do
+    get "recarga", to: "recargas#new", as: :nova_recarga
+    post "recarga", to: "recargas#create", as: nil
+    get "recarga/:id", to: "recargas#show", as: :recarga
+    post "recarga/:id/confirmar", to: "recargas#confirmar", as: :confirmar_recarga
     get "home", to: "home#index", as: :home
     get "extrato", to: "extratos#show", as: :extrato
+    get "extrato/exportar", to: "extratos#exportar", as: :exportar_extrato
     get "extrato/comprovantes/:id", to: "extratos#comprovante", as: :comprovante_extrato
   end
 
