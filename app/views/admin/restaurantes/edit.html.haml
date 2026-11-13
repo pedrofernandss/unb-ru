@@ -1,0 +1,6 @@
+- content_for :title, "Editar Unidade · RU UnB"
+
+%section.card.painel
+  %p.sobretitulo Administração Geral · Restaurantes e Catracas
+  %h2.painel__titulo Editar #{@restaurante.nome_was}
+  = render "formulario", restaurante: @restaurante

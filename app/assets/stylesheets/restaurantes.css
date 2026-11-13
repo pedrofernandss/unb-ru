@@ -1,0 +1,109 @@
+/* Gestão de Restaurantes e Catracas (Administração Geral) ------------------ */
+.campo__entrada select {
+  width: 100%;
+  padding: 0.75rem 0.875rem 0.75rem 2.5rem;
+  font: inherit;
+  font-size: 0.9375rem;
+  color: var(--cor-texto);
+  background: var(--cor-campo);
+  border: 1px solid transparent;
+  border-radius: var(--raio);
+}
+
+.campo__entrada select:focus {
+  outline: none;
+  background: var(--cor-superficie);
+  border-color: var(--cor-primaria);
+  box-shadow: var(--foco);
+}
+
+.unidades__titulo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--cor-primaria-escura);
+}
+
+.restaurante {
+  overflow: hidden;
+}
+
+.restaurante__cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.125rem 1.5rem;
+  background: var(--cor-fundo);
+  flex-wrap: wrap;
+}
+
+.restaurante__indice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--cor-primaria-escura);
+  border-radius: var(--raio);
+}
+
+.restaurante__titulo {
+  flex: 1;
+  min-width: 12rem;
+}
+
+.restaurante__titulo h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  color: var(--cor-primaria-escura);
+}
+
+.restaurante__titulo small {
+  color: var(--cor-texto-suave);
+}
+
+.restaurante__acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.restaurante__piso {
+  padding: 0.875rem 1.5rem 1rem;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.restaurante__piso h4 {
+  margin: 0 0 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-primaria);
+}
+
+.restaurante__catracas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.625rem;
+}
+
+.restaurante__vazio {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--cor-texto-fraca);
+}
+
+.catraca {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--cor-fundo);
+  border-radius: var(--raio);
+}
+
+.catraca strong {
+  font-size: 0.875rem;
+}

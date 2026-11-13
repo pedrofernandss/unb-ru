@@ -1,0 +1,59 @@
+- content_for :title, "Restaurantes e Catracas · RU UnB"
+
+.pagina-cabecalho
+  .pagina-cabecalho__texto
+    %p.sobretitulo Administração Geral · Restaurantes e Catracas
+    %h1 Gestão de Restaurantes e Catracas Físicas
+  .pagina-cabecalho__acoes
+    = button_to "Cadastrar Restaurante", new_admin_restaurante_path, method: :get, class: "botao botao--secundario"
+    = button_to "Associar Nova Catraca", new_admin_catraca_path, method: :get, class: "botao botao--primario"
+
+.indicadores
+  .card.indicador
+    .indicador__topo
+      %span.indicador__rotulo Total de restaurantes
+      %span.indicador__icone.indicador__icone--azul= icon :utensils
+    %strong.indicador__valor= pluralize(@restaurantes.size, "unidade")
+  .card.indicador
+    .indicador__topo
+      %span.indicador__rotulo Catracas cadastradas
+      %span.indicador__icone.indicador__icone--verde= icon :qr_code
+    %strong.indicador__valor.indicador__valor--verde= pluralize(@restaurantes.sum { |r| r.catracas.size }, "catraca")
+  .card.indicador
+    .indicador__topo
+      %span.indicador__rotulo Pisos atendidos
+      %span.indicador__icone.indicador__icone--azul= icon :map_pin
+    %strong.indicador__valor= pluralize(@restaurantes.sum(&:numero_de_pisos), "piso")
+
+%h2.unidades__titulo Unidades Cadastradas
+
+- if @restaurantes.empty?
+  .card.estado-vazio
+    %p Nenhum restaurante cadastrado.
+
+- @restaurantes.each_with_index do |restaurante, indice|
+  %section.card.restaurante
+    %header.restaurante__cabecalho
+      %span.restaurante__indice= indice + 1
+      .restaurante__titulo
+        %h3= restaurante.nome
+        %small
+          = pluralize(restaurante.numero_de_pisos, "piso")
+          ·
+          = pluralize(restaurante.catracas.size, "catraca")
+      .restaurante__acoes
+        = button_to "Editar Unidade", edit_admin_restaurante_path(restaurante), method: :get, class: "botao botao--secundario botao--miudo"
+        = button_to "Remover Unidade", admin_restaurante_path(restaurante), method: :delete, class: "botao botao--texto botao--miudo"
+
+    - (1..restaurante.numero_de_pisos).each do |piso|
+      .restaurante__piso{class: "piso-#{piso}"}
+        %h4 Piso #{piso}
+        - catracas = restaurante.catracas_do_piso(piso)
+        - if catracas.empty?
+          %p.restaurante__vazio Nenhuma catraca neste piso.
+        - else
+          .restaurante__catracas
+            - catracas.each do |catraca|
+              .catraca
+                %strong= catraca.identificacao
+                = button_to "Remover", admin_catraca_path(catraca), method: :delete, class: "botao botao--texto botao--miudo"
