@@ -16,6 +16,10 @@ Rails.application.routes.draw do
   get "configuracao-de-ponto", to: "paginas#em_construcao", as: :configuracao_de_ponto, defaults: { area: "Terminal Operacional" }
   get "admin/restaurantes", to: "paginas#em_construcao", as: :admin_restaurantes, defaults: { area: "Administração Geral" }
 
+  scope module: :funcionario do
+    get "historico-local", to: "historico_local#index", as: :historico_local
+  end
+
   # Portal do Estudante
   scope module: :estudante do
     get "home", to: "home#index", as: :home

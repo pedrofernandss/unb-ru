@@ -1,0 +1,32 @@
+<div id="historico-local">
+  <h1>Histórico Local</h1>
+
+  <% if @catraca.nil? %>
+    <p>Você não está gerindo nenhuma catraca no momento</p>
+  <% else %>
+    <p>Catraca gerenciada: <strong><%= @catraca.numero %></strong></p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Horário</th>
+          <th>Matrícula (Discente)</th>
+          <th>Modo de Validação</th>
+          <th>Tarifa</th>
+          <th>Status da Catraca</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @acessos.each do |acesso| %>
+          <tr>
+            <td><%= acesso.data_hora.strftime("%H:%M:%S") %></td>
+            <td><%= acesso.aluno.matricula %></td>
+            <td><%= acesso.modo_validacao %></td>
+            <td><%= number_to_currency(acesso.tarifa, unit: "R$", separator: ",", delimiter: ".", format: "%u%n") %></td>
+            <td><%= acesso.status %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>

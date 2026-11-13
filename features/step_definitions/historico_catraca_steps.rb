@@ -23,23 +23,32 @@ Then('a página deve mostrar um texto dizendo {string}') do |mensagem|
 end
 
 When('o funcionário está gerindo uma catraca') do
+  universidade = Universidade.first || Universidade.create!(nome: 'Universidade de Brasília')
+  campus = Campus.first || Campus.create!(nome: 'Darcy Ribeiro', universidade: universidade)
+  restaurante = Restaurante.first || Restaurante.create!(nome: 'RU Darcy Ribeiro', campus: campus)
+  
   @catraca = Catraca.create!(
     numero: '04',
-    nome: 'Catraca 04',
-    piso: 'Piso 2',
-    status: 'Online',
-    funcionario: @funcionario
+    piso: '2',
+    funcionario: @funcionario,
+    restaurante: restaurante
   )
 end
 
 When('a catraca que ele está gerindo tem o seguinte histórico:') do |table|
-  table.hashes.each do |linha|
-    AcessoCatraca.create!(
+  table.hashes.each_with_index do |linha, idx|
+    aluno = User.find_or_create_by!(matricula: linha['matricula_disc']) do |u|
+      u.nome = "Discente Teste #{idx + 1}"
+      u.password = 'senha1234'
+      u.password_confirmation = 'senha1234'
+      u.perfil = :aluno
+    end
+    HistoricoCatraca.create!(
       catraca: @catraca,
+      aluno: aluno,
       data_hora: Time.zone.parse(linha['data_hora']),
-      matricula_disc: linha['matricula_disc'],
       modo_validacao: linha['modo_validacao'],
-      tarifa: linha['tarifa'].to_f,
+      tarifa: linha['tarifa'].gsub(/[^\d,]/, '').tr(',', '.').to_f,
       status: linha['status_catraca']
     )
   end
@@ -60,8 +69,8 @@ end
 
 Then('a tabela deve conter a linha com: {string}, {string}, {string}, {string} e {string}') do |data_hora, matricula_disc, modo_validacao, tarifa, status_catraca|
   within('table tbody') do
-    [ data_hora, matricula_disc, modo_validacao, tarifa, status_catraca ].each do |linha|
-      expect(page).to have_content('tl', text: linha)
+    [ data_hora, matricula_disc, modo_validacao, tarifa, status_catraca ].each do |valor|
+      expect(page).to have_selector('td', text: valor)
     end
   end
 end
