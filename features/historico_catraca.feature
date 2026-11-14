@@ -6,11 +6,12 @@ Funcionalidade: Funcionário do restaurante consegue ver o histórico de acesso 
 
   Contexto:
     Dado que um funcionário está logado no aplicativo
-    E ele está na página de "Histórico Local"
 
   Cenário: Funcionário não está gerenciando uma catraca (caminho triste)
     Quando o funcionário não está gerindo nenhuma catraca
-    Então a página deve mostrar um texto dizendo "Você não está gerindo nenhuma catraca no momento"
+    E ele acessa a página de "Histórico Local"
+    Então ele deve ser redirecionado para a configuração de ponto de acesso
+    E a página deve mostrar um texto dizendo "Selecione uma catraca online para iniciar a operação"
 
   Cenário: Funcionário está gerenciando uma catraca (caminho feliz)
     Quando o funcionário está gerindo uma catraca
@@ -18,6 +19,7 @@ Funcionalidade: Funcionário do restaurante consegue ver o histórico de acesso 
       | data_hora           | matricula_disc | modo_validacao | tarifa | status_catraca | motivo              |
       | 16/10/2026 12:18:22 | 211048992      | Comum          | R$4,50 | Liberado       | Validação concluída |
       | 16/10/2024 12:17:45 | 221012443      | Comum          | R$0,00 | Bloqueado      | Saldo insuficiente  |
+    E ele acessa a página de "Histórico Local"
     Então ele deve ver um texto dizendo a catraca que ele está gerenciando
     E ele deve ver uma tabela com os cabeçalhos: "Horário", "Matrícula (Discente)", "Modo de Validação", "Tarifa", "Status da Catraca" e "Motivo"
     E a tabela deve conter a linha com: "12:18:22", "211048992", "Comum", "R$4,50", "Liberado" e "Validação concluída"

@@ -9,14 +9,18 @@
       %table.tabela.acessos
         %thead
           %tr
-            %th Data e hora
-            %th Matrícula
-            %th Modo
-            %th Resultado
+            %th Horário
+            %th Matrícula (Discente)
+            %th Modo de Validação
+            %th Tarifa
+            %th Status da Catraca
+            %th Motivo
         %tbody
           - historicos.each do |historico|
             %tr
-              %td= l(historico.data_hora, format: :short)
+              %td= historico.data_hora.strftime("%H:%M:%S")
               %td= historico.aluno.matricula
-              %td= historico.processamento_acesso&.modo || "—"
-              %td= historico.processamento_acesso&.resultado || "Registro anterior"
+              %td= historico.modo_validacao
+              %td= number_to_currency(historico.tarifa, unit: "R$", separator: ",", delimiter: ".", format: "%u%n")
+              %td= historico.status
+              %td= historico.motivo
