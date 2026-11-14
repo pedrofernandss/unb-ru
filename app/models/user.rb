@@ -8,9 +8,23 @@ class User < ApplicationRecord
 
   enum :perfil, { aluno: "aluno", funcionario: "funcionario", administrador: "administrador" }, default: :aluno
 
+  PRECO_REFEICAO = 4.50
+
+  def tem_saldo_suficiente?
+    saldo.to_f >= PRECO_REFEICAO
+  end
+
+  def debitar_refeicao!
+    return false unless tem_saldo_suficiente?
+
+    update!(saldo: saldo - PRECO_REFEICAO)
+    true
+  end
+
   # Relacionamentos de Aluno
   has_many :cartoes, foreign_key: :aluno_id, inverse_of: :aluno, dependent: :destroy
   has_many :transacoes, foreign_key: :aluno_id, inverse_of: :aluno, dependent: :destroy
+  has_many :recargas, foreign_key: :aluno_id, inverse_of: :aluno, dependent: :destroy
   has_many :inscricoes_fastpass, class_name: "InscricaoFastpass", foreign_key: :aluno_id,
                                  inverse_of: :aluno, dependent: :destroy
   has_many :historicos_catraca, class_name: "HistoricoCatraca", foreign_key: :aluno_id,
@@ -28,4 +42,5 @@ class User < ApplicationRecord
                         format: { with: FORMATO_MATRICULA, message: :formato_matricula, allow_blank: true }
   validates :password, length: { minimum: TAMANHO_MINIMO_SENHA }, allow_nil: true
   validates :saldo, numericality: { greater_than_or_equal_to: 0 }
+  validates :qr_code, uniqueness: true, allow_blank: true
 end

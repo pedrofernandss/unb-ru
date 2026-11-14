@@ -1,0 +1,32 @@
+!!!
+%html{lang: "pt-BR"}
+  %head
+    %title= content_for(:title) || "Terminal Operacional · RU UnB"
+    %meta{name: "viewport", content: "width=device-width,initial-scale=1"}
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag :app, "data-turbo-track": "reload"
+    = javascript_importmap_tags
+  %body.portal
+    %header.cabecalho-portal
+      .cabecalho-portal__conteudo
+        = link_to configuracao_de_ponto_path, class: "marca" do
+          = image_tag "logo-unb.png", alt: "Universidade de Brasília", class: "marca__logo"
+          %span.marca__texto
+            %strong RU UnB Digital
+            %small Terminal Operacional
+        %nav.navegacao{"aria-label": "Terminal Operacional"}
+          = link_to "Configuração de Ponto", configuracao_de_ponto_path, class: ("ativo" if current_page?(configuracao_de_ponto_path))
+          = link_to "Terminal de Validação", terminal_de_validacao_path, class: ("ativo" if current_page?(terminal_de_validacao_path))
+          = link_to "Histórico Local", historico_local_path, class: ("ativo" if current_page?(historico_local_path))
+        .cabecalho-portal__usuario
+          .usuario-resumo
+            %strong= current_user.nome
+            %small SIAPE #{current_user.matricula}
+          = button_to "Sair", logout_path, method: :delete, class: "botao botao--texto"
+    %main.portal__conteudo
+      - if flash[:notice]
+        .alerta.alerta--sucesso{role: "status"}= flash[:notice]
+      - if flash[:alert]
+        .alerta.alerta--erro{role: "alert"}= flash[:alert]
+      = yield

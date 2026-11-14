@@ -21,17 +21,19 @@ end
 
 When('eu seleciono o método de pagamento {string}') do |metodo|
   within('.metodos-de-pagamento') do
-    click_on metodo
+    choose metodo
   end
 end
 
 # O provedor externo é simulado: o cenário decide se a cobrança volta aprovada ou recusada.
 When('o provedor de pagamento aprova a transação') do
-  ProvedorDePagamentoFake.aprovar!(@estudante.recargas.last)
+  Rails.configuration.x.provedor_pagamento = ProvedorDePagamentoFake.new(:aprovado)
+  click_button 'Concluir pagamento'
 end
 
 When('o provedor de pagamento recusa a transação') do
-  ProvedorDePagamentoFake.recusar!(@estudante.recargas.last)
+  Rails.configuration.x.provedor_pagamento = ProvedorDePagamentoFake.new(:recusado)
+  click_button 'Concluir pagamento'
 end
 
 Then('o meu saldo deve ser {string}') do |valor|

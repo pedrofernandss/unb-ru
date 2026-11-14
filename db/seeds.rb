@@ -23,12 +23,24 @@ restaurantes.each_with_index do |restaurante, indice|
 end
 
 puts "Semeando tipos de refeição..."
+# A tarifa é por turno: o café da manhã é mais barato que almoço e jantar,
+# como o histórico do aluno de exemplo mais abaixo já mostrava.
 tipos = {
-  "cafe_da_manha" => [ "Café da manhã", "07:00", "09:30" ],
-  "almoco" => [ "Almoço", "11:00", "14:30" ],
-  "jantar" => [ "Jantar", "17:00", "19:30" ]
-}.to_h do |chave, (nome, inicio, fim)|
-  [ chave, TipoRefeicao.find_or_create_by!(nome: nome) { |t| t.hora_inicio = inicio; t.hora_fim = fim } ]
+  "cafe_da_manha" => [ "Café da manhã", "07:00", "09:30", "2.50" ],
+  "almoco" => [ "Almoço", "11:00", "14:30", "4.50" ],
+  "jantar" => [ "Jantar", "17:00", "19:30", "4.50" ]
+}.to_h do |chave, (nome, inicio, fim, tarifa)|
+  tipo = TipoRefeicao.find_or_initialize_by(nome: nome)
+  tipo.update!(hora_inicio: inicio, hora_fim: fim, tarifa: tarifa)
+  [ chave, tipo ]
+end
+
+puts "Semeando time-frames do FastPass (janelas de 15 min, tolerância de 3 min)..."
+tipos.each_value do |tipo|
+  next if tipo.time_frames.any?
+
+  tipo.configurar_time_frames(granularidade: 15, tolerancia: 3) ||
+    raise("Time-frames inválidos para #{tipo.nome}: #{tipo.errors.full_messages.to_sentence}")
 end
 
 puts "Semeando usuários (senha de todos: senha123)..."
@@ -78,5 +90,27 @@ if aluno.transacoes.none?
   ])
 end
 
+puts "Semeando funcionário e alunos para validação de saldo..."
+[
+  { nome: "Funcionário RU", matricula: "1234567", perfil: :funcionario },
+  { nome: "Estudante Sem Saldo", matricula: "26100001", perfil: :aluno, saldo: 0.0, qr_code: "QRCODE_001_SSALDO" },
+  { nome: "Estudante Com Saldo", matricula: "26100002", perfil: :aluno, saldo: 50.0, qr_code: "QRCODE_002_CSALDO" }
+].each do |atributos|
+User.find_or_create_by!(matricula: atributos[:matricula]) do |u|
+    u.assign_attributes(atributos.merge(password: "senha123"))
+  end
+end
+
+puts "Restaurando saldo de aluno com saldo..." # Para simulação da validação de saldo
+aluno_com_saldo = User.find_or_initialize_by(matricula: "26100002")
+aluno_com_saldo.update!(
+  nome: "Estudante Com Saldo",
+  password: "senha1234",
+  perfil: :aluno,
+  saldo: 50.0,
+  qr_code: "QRCODE_002_CSALDO"
+)
+
 puts "Pronto: #{Universidade.count} universidade, #{Campus.count} campi, #{Restaurante.count} restaurantes, " \
-     "#{Catraca.count} catracas, #{TipoRefeicao.count} tipos de refeição, #{Refeicao.count} refeições, #{User.count} usuários."
+     "#{Catraca.count} catracas, #{TipoRefeicao.count} tipos de refeição, #{TimeFrame.count} time-frames, " \
+     "#{Refeicao.count} refeições, #{User.count} usuários."
