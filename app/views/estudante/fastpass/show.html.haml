@@ -1,0 +1,36 @@
+- content_for :title, "Sorteio FastPass · RU UnB"
+
+.pagina-cabecalho
+  .pagina-cabecalho__texto
+    %p.sobretitulo Portal do Estudante · FastPass
+    %h1 Sorteio FastPass
+
+- if @turnos.empty?
+  %section.card.painel
+    %p.painel__descricao Ainda não há time-frames de FastPass disponíveis.
+
+- @turnos.each do |turno|
+  - inscricao = @inscricoes[turno.id]
+  %section.card.painel.secao-turno
+    %h2.painel__titulo= turno.nome
+    %p.painel__descricao
+      Servido das #{faixa_de_horario(turno.hora_inicio, turno.hora_fim).sub(' - ', ' às ')}.
+      Escolha uma janela de chegada; a inscrição é gratuita e vale para hoje.
+
+    - if inscricao
+      %p.etiqueta.etiqueta--sucesso
+        = icon :circle_check
+        Inscrito no Sorteio (#{faixa_de_horario(inscricao.time_frame.inicio, inscricao.time_frame.fim)})
+      - if inscricao.inscrito?
+        = button_to "Cancelar inscrição", fastpass_inscricao_path(inscricao), method: :delete,
+                    class: "botao botao--secundario",
+                    form: { data: { turbo_confirm: "Cancelar a inscrição no sorteio do #{turno.nome}?" } }
+    - else
+      = form_with url: fastpass_inscricoes_path, class: "formulario" do |f|
+        %ul.grade-time-frames
+          - turno.time_frames.each do |time_frame|
+            %li
+              %label.time-frame.time-frame--opcao
+                = f.radio_button :time_frame_id, time_frame.id, required: true
+                = faixa_de_horario(time_frame.inicio, time_frame.fim)
+        = f.button "Confirmar Inscrição", class: "botao botao--primario"

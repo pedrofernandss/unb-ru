@@ -8,6 +8,16 @@ module Estudante
       @transacao = current_user.transacoes.find(params[:id])
     end
 
+    def exportar
+      extrato = Extrato.new(current_user, filtros)
+      if extrato.filtradas.none?
+        redirect_to extrato_path(extrato.parametros), alert: "Não há lançamentos no período selecionado"
+      else
+        send_data ExtratoPdf.new(extrato).render, filename: "extrato-refeicoes.pdf",
+                  type: "application/pdf", disposition: "attachment"
+      end
+    end
+
     private
 
     def filtros
