@@ -29,3 +29,12 @@
   font-size: 1rem;
   margin-bottom: 0.25rem;
 }
+
+/* Aviso de que mudar o horário do turno apaga as janelas (_formulario_horario). */
+.alerta--aviso {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--cor-texto);
+  background: var(--cor-campo);
+  border-color: var(--cor-borda);
+}

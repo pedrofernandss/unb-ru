@@ -8,7 +8,14 @@
         - turno.errors.full_messages.each do |mensagem|
           %li= mensagem
 
-  = form_with model: turno, url: admin_turno_path(turno), class: "formulario" do |f|
+  - aviso = aviso_de_descarte(turno)
+  - if aviso
+    .alerta.alerta--aviso{role: "status"}
+      = icon :circle_alert
+      %span= aviso
+
+  = form_with model: turno, url: admin_turno_path(turno), class: "formulario",
+              data: { turbo_confirm: (aviso && "#{aviso} Deseja continuar?") } do |f|
     .campo-linha
       .campo{class: ("campo--erro" if turno.errors.any?)}
         .campo__cabecalho
