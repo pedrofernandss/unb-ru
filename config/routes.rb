@@ -16,11 +16,24 @@ Rails.application.routes.draw do
   get "configuracao-de-ponto", to: "paginas#em_construcao", as: :configuracao_de_ponto, defaults: { area: "Terminal Operacional" }
   get "admin/restaurantes", to: "paginas#em_construcao", as: :admin_restaurantes, defaults: { area: "Administração Geral" }
 
+  # Administração Geral
+  namespace :admin do
+    resources :turnos, only: %i[index edit update] do
+      patch :configurar_time_frames, on: :collection
+    end
+  end
+
   # Portal do Estudante
   scope module: :estudante do
     get "home", to: "home#index", as: :home
     get "extrato", to: "extratos#show", as: :extrato
     get "extrato/comprovantes/:id", to: "extratos#comprovante", as: :comprovante_extrato
+
+    # Sorteio do FastPass (US13)
+    get "fastpass-home", to: "fastpass#show", as: :fastpass
+    scope "fastpass", as: "fastpass" do
+      resources :inscricoes, controller: "inscricoes_fastpass", only: %i[create destroy]
+    end
   end
 
   if Rails.env.local?

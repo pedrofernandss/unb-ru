@@ -1,4 +1,16 @@
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
+#
+# It's strongly recommended that you check this file into your version control system.
+
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_120000) do
   create_table "campi", force: :cascade do |t|
     t.integer "universidade_id", null: false
     t.string "nome", null: false
@@ -48,16 +60,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
 
   create_table "inscricoes_fastpass", force: :cascade do |t|
     t.integer "aluno_id", null: false
-    t.integer "restaurante_id", null: false
-    t.integer "refeicao_id", null: false
+    t.integer "restaurante_id"
+    t.integer "refeicao_id"
     t.date "data", null: false
     t.time "hora_chegada"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "time_frame_id", null: false
+    t.string "status", default: "inscrito", null: false
+    t.index ["aluno_id", "data", "time_frame_id"], name: "idx_on_aluno_id_data_time_frame_id_e28b82fba7", unique: true
     t.index ["aluno_id", "refeicao_id"], name: "index_inscricoes_fastpass_on_aluno_id_and_refeicao_id", unique: true
     t.index ["aluno_id"], name: "index_inscricoes_fastpass_on_aluno_id"
     t.index ["refeicao_id"], name: "index_inscricoes_fastpass_on_refeicao_id"
     t.index ["restaurante_id"], name: "index_inscricoes_fastpass_on_restaurante_id"
+    t.index ["time_frame_id"], name: "index_inscricoes_fastpass_on_time_frame_id"
   end
 
   create_table "refeicoes", force: :cascade do |t|
@@ -82,12 +98,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
     t.index ["campus_id"], name: "index_restaurantes_on_campus_id", unique: true
   end
 
+  create_table "time_frames", force: :cascade do |t|
+    t.integer "tipo_refeicao_id", null: false
+    t.time "inicio", null: false
+    t.time "fim", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tipo_refeicao_id", "inicio"], name: "index_time_frames_on_tipo_refeicao_id_and_inicio", unique: true
+    t.index ["tipo_refeicao_id"], name: "index_time_frames_on_tipo_refeicao_id"
+  end
+
   create_table "tipos_refeicao", force: :cascade do |t|
     t.string "nome", null: false
     t.time "hora_inicio", null: false
     t.time "hora_fim", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "granularidade_minutos"
+    t.integer "tolerancia_minutos"
     t.index ["nome"], name: "index_tipos_refeicao_on_nome", unique: true
   end
 
@@ -136,10 +164,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_150000) do
   add_foreign_key "historicos_catraca", "users", column: "aluno_id"
   add_foreign_key "inscricoes_fastpass", "refeicoes"
   add_foreign_key "inscricoes_fastpass", "restaurantes"
+  add_foreign_key "inscricoes_fastpass", "time_frames"
   add_foreign_key "inscricoes_fastpass", "users", column: "aluno_id"
   add_foreign_key "refeicoes", "restaurantes"
   add_foreign_key "refeicoes", "tipos_refeicao", column: "tipo_refeicao_id"
   add_foreign_key "restaurantes", "campi"
+  add_foreign_key "time_frames", "tipos_refeicao", column: "tipo_refeicao_id"
   add_foreign_key "transacoes", "catracas"
   add_foreign_key "transacoes", "refeicoes"
   add_foreign_key "transacoes", "restaurantes"
