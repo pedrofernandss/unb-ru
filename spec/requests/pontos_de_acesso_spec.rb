@@ -6,6 +6,11 @@ RSpec.describe "Ponto de acesso", type: :request do
   let(:catraca) { restaurante.catracas.create!(numero: 4, piso: 2, online: true) }
   before { entrar_como(funcionario) }
 
+  def registrar_acesso(ponto, aluno)
+    ponto.historicos_catraca.create!(aluno: aluno, data_hora: Time.current, modo_validacao: "Comum",
+      status: "Liberado", tarifa: TarifaRefeicao::PADRAO, motivo: "Validação concluída")
+  end
+
   def vincular(ponto = catraca)
     post configuracao_de_ponto_path, params: { restaurante_id: ponto.restaurante_id, catraca_id: ponto.id }
   end
@@ -13,8 +18,8 @@ RSpec.describe "Ponto de acesso", type: :request do
   it "vincula a sessão e limita terminal/histórico à catraca escolhida" do
     aluno = criar_usuario
     outro = criar_usuario
-    catraca.historicos_catraca.create!(aluno: aluno, data_hora: Time.current)
-    restaurante.catracas.create!(numero: 5, piso: 2, online: true).historicos_catraca.create!(aluno: outro, data_hora: Time.current)
+    registrar_acesso(catraca, aluno)
+    registrar_acesso(restaurante.catracas.create!(numero: 5, piso: 2, online: true), outro)
     vincular
     expect(response).to redirect_to(terminal_de_validacao_path)
     follow_redirect!
