@@ -1,0 +1,59 @@
+<div id="painel-catraca">
+  <h1>Catraca Atual<%= ": #{@catraca.numero}" if @catraca.present? %></h1>
+  <% if @catraca.present? %>
+    <p><strong>Catraca <%= @catraca.numero %></strong> — <%= @catraca.restaurante.nome %> (<%= @catraca.online? ? "Online" : "Offline" %>)</p>
+  <% else %>
+    <p>Nenhuma catraca selecionada. <%= link_to "Configurar ponto de acesso", configuracao_de_ponto_path %></p>
+  <% end %>
+
+  <section id="leitura-qrcode">
+    <h2>Leitura Ótica do QR code</h2>
+
+    <div class="simulacao-botoes" style="margin-bottom: 1rem;">
+      <%= button_to "Simular com saldo",
+                    validacao_path,
+                    method: :post,
+                    params: { qr_code: "QRCODE_002_CSALDO" } %>
+
+      <%= button_to "Simular sem saldo",
+                    validacao_path,
+                    method: :post,
+                    params: { qr_code: "QRCODE_001_SSALDO" } %>
+    </div>
+
+    <%# Mantido para compatibilidade com a leitura real e com os testes do Cucumber %>
+    <%= form_with url: validacao_path, method: :post, local: true do |form| %>
+      <div>
+        <%= form.label :qr_code, "QR Code" %>
+        <%= form.text_field :qr_code, autofocus: true, placeholder: "Aguardando leitura do QR Code" %>
+      </div>
+
+      <%= form.submit "Simular" %>
+    <% end %>
+  </section>
+
+  <hr>
+
+  <section id="status-acesso">
+    <h2>Status de Acesso</h2>
+
+    <div class="status_catraca">
+      Status: <strong><%= @status_catraca %></strong>
+    </div>
+
+    <% if @mensagem_status.present? %>
+      <p><%= @mensagem_status %></p>
+    <% end %>
+
+    <% if @estudante.present? %>
+      <div id="dados-estudante">
+        <h3>Informações do Aluno</h3>
+        <ul>
+          <li><strong>Nome:</strong> <%= @estudante.nome %></li>
+          <li><strong>Matrícula:</strong> <%= @estudante.matricula %></li>
+          <li><strong>Saldo Atual:</strong> <%= number_to_currency(@estudante.saldo, unit: "R$ ", separator: ",", delimiter: ".") %></li>
+        </ul>
+      </div>
+    <% end %>
+  </section>
+</div>

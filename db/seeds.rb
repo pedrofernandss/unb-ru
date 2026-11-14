@@ -90,6 +90,27 @@ if aluno.transacoes.none?
   ])
 end
 
+puts "Semeando funcionário e alunos para validação de saldo..."
+[
+  { nome: "Funcionário RU", matricula: "1234567", perfil: :funcionario },
+  { nome: "Estudante Sem Saldo", matricula: "26100001", perfil: :aluno, saldo: 0.0, qr_code: "QRCODE_001_SSALDO" },
+  { nome: "Estudante Com Saldo", matricula: "26100002", perfil: :aluno, saldo: 50.0, qr_code: "QRCODE_002_CSALDO" }
+].each do |atributos|
+User.find_or_create_by!(matricula: atributos[:matricula]) do |u|
+    u.assign_attributes(atributos.merge(password: "senha123"))
+  end
+end
+
+puts "Restaurando saldo de aluno com saldo..." # Para simulação da validação de saldo
+aluno_com_saldo = User.find_or_initialize_by(matricula: "26100002")
+aluno_com_saldo.update!(
+  nome: "Estudante Com Saldo",
+  password: "senha1234",
+  perfil: :aluno,
+  saldo: 50.0,
+  qr_code: "QRCODE_002_CSALDO"
+)
+
 puts "Pronto: #{Universidade.count} universidade, #{Campus.count} campi, #{Restaurante.count} restaurantes, " \
      "#{Catraca.count} catracas, #{TipoRefeicao.count} tipos de refeição, #{TimeFrame.count} time-frames, " \
      "#{Refeicao.count} refeições, #{User.count} usuários."
