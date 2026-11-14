@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_120000) do
   create_table "campi", force: :cascade do |t|
     t.integer "universidade_id", null: false
     t.string "nome", null: false
@@ -68,6 +68,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
     t.datetime "updated_at", null: false
     t.integer "time_frame_id", null: false
     t.string "status", default: "inscrito", null: false
+    t.index ["aluno_id", "data", "time_frame_id"], name: "idx_on_aluno_id_data_time_frame_id_e28b82fba7", unique: true
     t.index ["aluno_id", "refeicao_id"], name: "index_inscricoes_fastpass_on_aluno_id_and_refeicao_id", unique: true
     t.index ["aluno_id"], name: "index_inscricoes_fastpass_on_aluno_id"
     t.index ["refeicao_id"], name: "index_inscricoes_fastpass_on_refeicao_id"

@@ -13,12 +13,17 @@ class InscricaoFastpass < ApplicationRecord
   belongs_to :refeicao, optional: true
 
   validates :data, presence: true
+  # Regra do ER original, para quando refeicao_id voltar a ser preenchido. No fluxo
+  # da #13 a coluna fica nula, e o índice (aluno_id, refeicao_id) não barra nada:
+  # quem garante a unicidade hoje é uma_por_turno_no_dia.
   validates :aluno_id, uniqueness: { scope: :refeicao_id }, if: :refeicao_id?
   validate :uma_por_turno_no_dia, if: -> { aluno && time_frame && data }
 
   private
 
   # A regra é uma inscrição por turno (Almoço, Jantar) no dia, e não por janela.
+  # O banco só garante a mesma janela (índice aluno_id, data, time_frame_id): dois
+  # envios simultâneos em janelas diferentes do mesmo turno ainda passariam.
   def uma_por_turno_no_dia
     turno = time_frame.tipo_refeicao
     outras = InscricaoFastpass.joins(:time_frame)
