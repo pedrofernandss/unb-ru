@@ -8,6 +8,7 @@ module Admin
     def index
     end
 
+    # Não existe edit.html.haml: o formulário (_formulario_horario) aparece na própria lista.
     def edit
       render :index
     end
