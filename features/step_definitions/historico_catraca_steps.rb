@@ -1,17 +1,17 @@
-Given('que um funcionário está logado no aplicativo') do
-  @funcionario = User.create!(
-    nome: 'Teste Funcionário',
-    matricula: '1234567',
-    password: 'senha123',
-    perfil: :funcionario,
-    catraca: nil
-  )
-  login_as(@funcionario, scope: :user)
-end
+# Given('que um funcionário está logado no aplicativo') do
+#   @funcionario = User.create!(
+#     nome: 'Teste Funcionário',
+#     matricula: '1234567',
+#     password: 'senha123',
+#     perfil: :funcionario,
+#     catraca: nil
+#   )
+#   login_as(@funcionario, scope: :user)
+# end
 
-Given('ele está na página de "Histórico Local"') do
-  visit historico_local_path
-end
+# Given('ele está na página de "Histórico Local"') do
+#   visit historico_local_path
+# end
 
 When('o funcionário não está gerindo nenhuma catraca') do
   @funcionario.update!(catraca: nil)

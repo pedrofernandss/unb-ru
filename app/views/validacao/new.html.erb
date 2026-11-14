@@ -1,5 +1,10 @@
 <div id="painel-catraca">
-  <h1>Catraca Atual</h1>
+  <h1>Catraca Atual<%= ": #{@catraca.numero}" if @catraca.present? %></h1>
+  <% if @catraca.present? %>
+    <p><strong>Catraca <%= @catraca.numero %></strong> — <%= @catraca.restaurante.nome %> (<%= @catraca.online? ? "Online" : "Offline" %>)</p>
+  <% else %>
+    <p>Nenhuma catraca selecionada. <%= link_to "Configurar ponto de acesso", configuracao_de_ponto_path %></p>
+  <% end %>
 
   <section id="leitura-qrcode">
     <h2>Leitura Ótica do QR code</h2>
