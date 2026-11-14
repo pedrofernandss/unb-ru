@@ -1,5 +1,10 @@
 class AddTimeFrameAndStatusToInscricoesFastpass < ActiveRecord::Migration[8.1]
   def change
+    # Inscrições anteriores não têm janela e não há como saber qual o aluno teria
+    # escolhido, então são apagadas de propósito. Sem isso, o null: false abaixo
+    # quebra em qualquer banco que já tenha inscrições.
+    up_only { execute "DELETE FROM inscricoes_fastpass" }
+
     # A inscrição é feita em uma janela do turno (US13).
     add_reference :inscricoes_fastpass, :time_frame, null: false, foreign_key: true
 
