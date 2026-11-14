@@ -1,0 +1,40 @@
+.pagina-cabecalho
+  %div
+    %p.sobretitulo Terminal Operacional
+    %h1 Terminal de Validação
+= render "operador/contexto"
+.terminal-grade
+  .card.painel
+    %h2 Leitura de QR Code
+    = form_with url: terminal_de_validacao_path, class: "formulario", data: { turbo: false } do
+      = hidden_field_tag :chave, @chave
+      %fieldset.modos-validacao
+        %legend Modo Operacional da Catraca
+        %label
+          = radio_button_tag :modo, "Comum", params[:modo] == "Comum"
+          Modo Comum
+        %label
+          = radio_button_tag :modo, "FastPass", params[:modo] != "Comum"
+          Modo FastPass
+      .campo
+        = label_tag :matricula, "QR Code"
+        = text_field_tag :matricula, nil, required: true, class: "campo__controle", autocomplete: "off"
+        %small Informe a matrícula lida pelo terminal.
+      = submit_tag "Validar", class: "botao botao--primario"
+    - if Rails.env.local?
+      %p.painel__nota Catraca simulada neste ambiente de demonstração.
+  .card.painel.painel-de-resultado{role: "status"}
+    - if @resultado
+      %h2{class: (@resultado.resultado == "ACESSO LIBERADO" ? "resultado--liberado" : "resultado--bloqueado")}= @resultado.resultado
+      %p= @resultado.motivo
+      - if @resultado.liberado? && !@resultado.comando_enviado_em?
+        %p Comando pendente de entrega à catraca.
+      %p Matrícula: #{@resultado.matricula}
+      - if @resultado.aluno
+        %p Saldo atual: #{number_to_currency(@resultado.aluno.reload.saldo)}
+      %p Horário da leitura: #{l(@resultado.data_hora, format: :short)}
+    - else
+      %h2 Aguardando leitura
+      %p Posicione o QR Code no leitor ou informe a matrícula.
+    %p.painel__nota Critério de Horário Exato · Tolerância Zero Ativa · Fim da janela inclusivo
+= render "operador/historicos", historicos: @historicos

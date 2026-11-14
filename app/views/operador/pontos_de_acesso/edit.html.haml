@@ -1,0 +1,38 @@
+.pagina-cabecalho
+  %div
+    %p.sobretitulo Terminal Operacional
+    %h1 Configuração de Ponto de Acesso
+  %span.etiqueta.etiqueta--sucesso Operador autenticado
+- if @restaurantes.empty?
+  .card.estado-vazio
+    %p Não há restaurantes disponíveis
+    %small Solicite o cadastro à administração.
+- else
+  = form_with url: configuracao_de_ponto_path, class: "ponto-grade", data: { turbo: false } do
+    .card.painel
+      %fieldset.unidades-operacionais
+        %legend Selecione a Unidade Operacional
+        - @restaurantes.each do |restaurante|
+          %label.opcao-cartao
+            = radio_button_tag :restaurante_id, restaurante.id, params[:restaurante_id].to_s == restaurante.id.to_s
+            %strong= restaurante.nome
+            %small= restaurante.campus.nome
+      %fieldset.catracas-fisicas
+        %legend Selecione a Catraca Física
+        - @restaurantes.each do |restaurante|
+          %h2= restaurante.nome
+          - if restaurante.catracas.empty?
+            %p Nenhuma catraca cadastrada nesta unidade.
+          - restaurante.catracas.sort_by { |catraca| [catraca.piso, catraca.numero] }.group_by(&:piso).each do |piso, catracas|
+            %h3 Piso #{piso}
+            .opcoes-grade
+              - catracas.each do |catraca|
+                %label.opcao-cartao
+                  = radio_button_tag :catraca_id, catraca.id, params[:catraca_id].to_s == catraca.id.to_s
+                  %strong= catraca.identificacao
+                  %span{class: (catraca.online? ? "etiqueta etiqueta--sucesso" : "etiqueta etiqueta--neutra")}= catraca.online? ? "Online" : "Offline"
+    %aside.card.painel.resumo-recarga
+      %h2 Vinculação da operação
+      %p Selecione uma unidade e uma catraca do mesmo restaurante.
+      %p A vinculação vale para esta sessão e termina ao sair do sistema.
+      = submit_tag "Confirmar e Iniciar Operação", class: "botao botao--primario"
