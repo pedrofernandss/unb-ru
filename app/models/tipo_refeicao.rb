@@ -19,10 +19,10 @@ class TipoRefeicao < ApplicationRecord
   after_update :descartar_time_frames, if: -> { saved_change_to_hora_inicio? || saved_change_to_hora_fim? }
 
   # Grava a configuração e recria as janelas do turno. Retorna false se for inválida.
+  # O save! valida uma vez só e, se falhar, desfaz a transação e deixa os erros em errors.
   def configurar_time_frames(granularidade:, tolerancia:)
     self.granularidade_minutos = granularidade
     self.tolerancia_minutos = tolerancia
-    return false unless valid?(:configuracao_time_frames)
 
     transaction do
       save!(context: :configuracao_time_frames)
@@ -34,6 +34,8 @@ class TipoRefeicao < ApplicationRecord
       end
     end
     true
+  rescue ActiveRecord::RecordInvalid
+    false
   end
 
   def duracao_em_minutos
@@ -78,13 +80,13 @@ class TipoRefeicao < ApplicationRecord
   end
 
   # Dois intervalos se sobrepõem quando um começa antes de o outro terminar e vice-versa.
+  # A comparação é feita pelo banco, que devolve só o primeiro turno em conflito.
   def sem_sobreposicao
     return if errors.any?
 
-    TipoRefeicao.where.not(id: id).each do |outro|
-      if hora_inicio < outro.hora_fim && hora_fim > outro.hora_inicio
-        errors.add(:base, :sobreposicao, turno: nome, outro: outro.nome)
-      end
-    end
+    outro = TipoRefeicao.where.not(id: id)
+                        .where("hora_inicio < ? AND hora_fim > ?", hora_fim, hora_inicio)
+                        .order(:hora_inicio).first
+    errors.add(:base, :sobreposicao, turno: nome, outro: outro.nome) if outro
   end
 end
