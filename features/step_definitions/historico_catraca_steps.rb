@@ -3,10 +3,11 @@ Given('que um funcionário está logado no aplicativo') do
     nome: 'Teste Funcionário',
     matricula: '1234567',
     password: 'senha123',
+    password_confirmation: 'senha123',
     perfil: :funcionario,
     catraca: nil
   )
-  login_as(@funcionario, scope: :user)
+  page.set_rack_session(user_id: @funcionario.id)
 end
 
 Given('ele está na página de "Histórico Local"') do
@@ -29,7 +30,8 @@ When('o funcionário está gerindo uma catraca') do
 
   @catraca = Catraca.create!(
     numero: '04',
-    piso: '2',
+    piso: 2,
+    online: true,
     funcionario: @funcionario,
     restaurante: restaurante
   )
@@ -48,28 +50,29 @@ When('a catraca que ele está gerindo tem o seguinte histórico:') do |table|
       aluno: aluno,
       data_hora: Time.zone.parse(linha['data_hora']),
       modo_validacao: linha['modo_validacao'],
-      tarifa: linha['tarifa'].gsub(/[^\d,]/, '').tr(',', '.').to_f,
-      status: linha['status_catraca']
+      tarifa: BigDecimal(linha['tarifa'].gsub(/[^\d,]/, '').tr(',', '.')),
+      status: linha['status_catraca'],
+      motivo: linha['motivo']
     )
   end
-  visit current_path # Recarrega a página pra atualizar a tabela
+  visit current_path
 end
 
 Then('ele deve ver um texto dizendo a catraca que ele está gerenciando') do
   expect(page).to have_content(@catraca.numero)
 end
 
-Then('ele deve ver uma tabela com os cabeçalhos: {string}, {string}, {string}, {string} e {string}') do |cab1, cab2, cab3, cab4, cab5|
+Then('ele deve ver uma tabela com os cabeçalhos: {string}, {string}, {string}, {string}, {string} e {string}') do |cab1, cab2, cab3, cab4, cab5, cab6|
   within('table thead') do
-    [ cab1, cab2, cab3, cab4, cab5 ].each do |cabecalho|
+    [ cab1, cab2, cab3, cab4, cab5, cab6 ].each do |cabecalho|
       expect(page).to have_selector('th', text: cabecalho)
     end
   end
 end
 
-Then('a tabela deve conter a linha com: {string}, {string}, {string}, {string} e {string}') do |data_hora, matricula_disc, modo_validacao, tarifa, status_catraca|
+Then('a tabela deve conter a linha com: {string}, {string}, {string}, {string}, {string} e {string}') do |data_hora, matricula_disc, modo_validacao, tarifa, status_catraca, motivo|
   within('table tbody') do
-    [ data_hora, matricula_disc, modo_validacao, tarifa, status_catraca ].each do |valor|
+    [ data_hora, matricula_disc, modo_validacao, tarifa, status_catraca, motivo ].each do |valor|
       expect(page).to have_selector('td', text: valor)
     end
   end

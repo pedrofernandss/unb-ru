@@ -14,6 +14,7 @@
           <th>Modo de Validação</th>
           <th>Tarifa</th>
           <th>Status da Catraca</th>
+          <th>Motivo</th>
         </tr>
       </thead>
       <tbody>
@@ -24,6 +25,7 @@
             <td><%= acesso.modo_validacao %></td>
             <td><%= number_to_currency(acesso.tarifa, unit: "R$", separator: ",", delimiter: ".", format: "%u%n") %></td>
             <td><%= acesso.status %></td>
+            <td><%= acesso.motivo.presence || "-" %></td>
           </tr>
         <% end %>
       </tbody>

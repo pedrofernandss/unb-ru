@@ -3,7 +3,7 @@ module Funcionario
     before_action :verificar_funcionario!
 
     def index
-      @catraca = current_user.catraca
+      @catraca = Catraca.find_by(id: session[:catraca_em_operacao_id]) || current_user.catraca
       @acessos = if @catraca
         @catraca.historicos_catraca.includes(:aluno).order(data_hora: :desc)
       else
