@@ -1,0 +1,62 @@
+- content_for :title, "Cadastro de Usuário · Sistema de Acesso UnB"
+
+%header.card.cabecalho-pagina
+  .cabecalho-pagina__titulo
+    %span.cabecalho-pagina__icone= icon :file_text
+    %h1 Cadastro de Usuário
+  %span.etiqueta.etiqueta--sucesso Sistema de Acesso UnB
+
+%section.card.painel
+  %p.sobretitulo
+    = icon :user_plus
+    Cadastro de usuário
+  %h2.painel__titulo Cadastro de Usuário
+  %p.painel__descricao
+    Preencha seus dados pessoais e de acesso para criar sua conta no sistema
+    e liberar o acesso às catracas.
+
+  - if flash[:alert]
+    .alerta.alerta--erro{role: "alert"}
+      = icon :circle_alert
+      %div
+        %strong= flash[:alert]
+        - if @user.errors.any?
+          %ul.alerta__lista
+            - @user.errors.full_messages.each do |mensagem|
+              %li= mensagem
+
+  = form_with model: @user, url: signup_path, class: "formulario" do |f|
+    .campo{class: ("campo--erro" if @user.errors[:nome].any?)}
+      .campo__cabecalho
+        = f.label :nome, "Nome Completo"
+        %span.campo__obrigatorio Obrigatório
+      .campo__entrada
+        = icon :user
+        = f.text_field :nome, placeholder: "Digite seu nome completo", autocomplete: "name", autofocus: true, required: true
+
+    .campo{class: ("campo--erro" if @user.errors[:matricula].any?)}
+      .campo__cabecalho
+        = f.label :matricula, "Matrícula SIGAA ou SIAPE"
+        %span.campo__obrigatorio Obrigatório
+      .campo__entrada
+        = icon :id_card
+        = f.text_field :matricula, placeholder: "Ex: 2023123456 ou 1984201", inputmode: "numeric", autocomplete: "username", required: true
+
+    .campo-linha
+      = render "shared/campo_senha", f: f, atributo: :password, rotulo: "Senha de Acesso", placeholder: "Crie uma senha forte"
+      = render "shared/campo_senha", f: f, atributo: :password_confirmation, rotulo: "Confirmar Senha", placeholder: "Confirme sua senha"
+
+    = f.button class: "botao botao--primario botao--largo" do
+      = icon :save
+      Criar Minha Conta
+
+  %p.painel__link
+    Já possui uma conta?
+    = link_to "Acesse aqui", login_path
+
+  %p.painel__nota
+    = icon :shield_check
+    %span
+      %strong Proteção de Dados:
+      Os dados fornecidos serão utilizados exclusivamente para fins de controle
+      de acesso e identificação institucional, em conformidade com a LGPD.

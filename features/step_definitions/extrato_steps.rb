@@ -4,7 +4,7 @@ end
 
 Given('que eu estou logado como um estudante') do
   @estudante = User.create!(
-    nome: 'Estudante', 
+    nome: 'Estudante',
     matricula: '190012345',
     password: 'password123'
   )
@@ -13,7 +13,7 @@ end
 
 Given('que eu sou um estudante recém-cadastrado sem histórico') do
   @estudante = User.create!(
-    nome: 'Calouro', 
+    nome: 'Calouro',
     matricula: '200054321',
     password: 'password123'
   )
@@ -22,16 +22,23 @@ end
 
 Given('eu possuo o seguinte histórico de uso no Restaurante Universitário:') do |table|
   table.hashes.each do |linha|
-    Transaction.create!(
-      user: @estudante,
-      data_hora: linha['data_hora'],
+    nome_restaurante, piso = linha['restaurante'].split(' - Piso ')
+    restaurante = restaurante_de_teste(nome_restaurante)
+    catraca = piso && restaurante.catracas.find_or_create_by!(piso: piso.to_i) do |c|
+      c.numero = restaurante.catracas.count + 1
+    end
+
+    @estudante.transacoes.create!(
+      data_hora: Time.zone.strptime(linha['data_hora'], '%d/%m/%Y %H:%M'),
       tipo: linha['tipo'],
-      restaurante: linha['restaurante'],
+      restaurante: restaurante,
+      catraca: catraca,
       metodo: linha['metodo'],
-      valor: linha['valor'].to_f,
-      comprovante: linha['comprovante']
+      valor: linha['valor'].to_d
     )
   end
+
+  travel_to(@estudante.transacoes.maximum(:data_hora) + 10.minutes)
 end
 
 When('eu clico no botão {string} no topo da página') do |texto_botao|
@@ -61,7 +68,7 @@ end
 
 Then('a tabela deve exibir a linha com {string}, {string}, {string}, {string}, {string} e {string}') do |data, evento, restaurante, metodo, valor, comprovante|
   within('table tbody') do
-    linha = find('tr', text: data)  
+    linha = find('tr', text: data)
     expect(linha).to have_content(evento)
     expect(linha).to have_content(restaurante)
     expect(linha).to have_content(metodo)
@@ -78,7 +85,7 @@ Then(/^eu devo ver um card com o (.*) vazio$/) do |nome_do_card|
 end
 
 Then('a tabela deve estar vazia') do
-  within('table') do    
+  within('table') do
     tbody = find('tbody')
     expect(tbody).to have_no_selector('tr')
   end

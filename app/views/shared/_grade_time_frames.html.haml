@@ -1,0 +1,4 @@
+-# Janelas do FastPass de um turno. Uso: render "shared/grade_time_frames", time_frames: turno.time_frames
+%ul.grade-time-frames
+  - time_frames.each do |time_frame|
+    %li.time-frame= faixa_de_horario(time_frame.inicio, time_frame.fim)

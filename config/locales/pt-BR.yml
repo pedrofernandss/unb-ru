@@ -1,0 +1,112 @@
+pt-BR:
+  activerecord:
+    models:
+      user:
+        one: "Usuário"
+        other: "Usuários"
+    attributes:
+      user:
+        nome: "Nome completo"
+        matricula: "Matrícula"
+        password: "Senha"
+        password_confirmation: "Confirmação de senha"
+      restaurante:
+        nome: "Nome da Unidade"
+        numero_de_pisos: "Número de Pisos"
+      catraca:
+        numero: "Número da Catraca"
+        piso: "Piso"
+        restaurante: "Restaurante"
+        online: "Online"
+    errors:
+      messages:
+        restrict_dependent_destroy:
+          has_many: "Não é possível excluir porque existem %{record} dependentes"
+      models:
+        user:
+          attributes:
+            matricula:
+              formato_matricula: "deve conter apenas números (7 a 12 dígitos)"
+              taken: "já está cadastrada"
+        restaurante:
+          attributes:
+            numero_de_pisos:
+              abaixo_das_catracas: "não pode ser menor que %{piso}, o piso mais alto com catraca"
+            base:
+              nome_em_uso: "Já existe um restaurante com esse nome"
+              restrict_dependent_destroy:
+                has_many: "Remova as catracas antes de excluir o restaurante"
+        catraca:
+          attributes:
+            base:
+              numero_em_uso: "Já existe uma catraca com esse número neste restaurante"
+              possui_acessos: "Esta catraca já registrou acessos e não pode ser removida. Coloque-a offline para tirá-la de operação"
+            restaurante:
+              required: "deve ser selecionado"
+            piso:
+              fora_do_restaurante: "deve estar entre 1 e %{maximo}"
+        tipo_refeicao:
+          attributes:
+            base:
+              horario_invalido: "Horário inválido"
+              fim_antes_do_inicio: "O horário final deve ser posterior ao inicial"
+              sobreposicao: "O horário do %{turno} se sobrepõe ao turno %{outro}"
+              granularidade_nao_numerica: "A granularidade deve ser um número"
+              granularidade_nao_positiva: "A granularidade deve ser maior que 0"
+              granularidade_nao_divide: "A granularidade deve dividir a duração do turno (%{duracao} min)"
+              tolerancia_invalida: "A tolerância deve ser um número inteiro maior ou igual a 0"
+        inscricao_fastpass:
+          attributes:
+            base:
+              ja_inscrito_no_turno: "Você já possui uma inscrição para o %{turno}. Cancele a atual para alterar o horário."
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      blank: "não pode ficar em branco"
+      confirmation: "não confere com %{attribute}"
+      invalid: "não é válido(a)"
+      taken: "já está em uso"
+      too_short: "é muito curto(a) (mínimo: %{count} caracteres)"
+      too_long: "é muito longo(a) (máximo: %{count} caracteres)"
+      password_too_long: "é muito longa (máximo: 72 caracteres)"
+      required: "é obrigatório(a)"
+      not_a_number: "deve ser um número"
+      not_an_integer: "deve ser um número inteiro"
+      greater_than: "deve ser maior que %{count}"
+  helpers:
+    submit:
+      create: "Criar %{model}"
+      update: "Salvar %{model}"
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%d/%m"
+      long: "%d de %B de %Y"
+    day_names: [domingo, segunda-feira, terça-feira, quarta-feira, quinta-feira, sexta-feira, sábado]
+    abbr_day_names: [dom, seg, ter, qua, qui, sex, sáb]
+    month_names: [~, janeiro, fevereiro, março, abril, maio, junho, julho, agosto, setembro, outubro, novembro, dezembro]
+    abbr_month_names: [~, jan, fev, mar, abr, mai, jun, jul, ago, set, out, nov, dez]
+    order:
+      - :day
+      - :month
+      - :year
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M"
+      short: "%d/%m %H:%M"
+      long: "%d de %B de %Y, %H:%M"
+    am: ""
+    pm: ""
+  number:
+    format:
+      separator: ","
+      delimiter: "."
+      precision: 2
+    currency:
+      format:
+        unit: "R$"
+        format: "%u %n"
+        negative_format: "-%u %n"
+        separator: ","
+        delimiter: "."
+        precision: 2

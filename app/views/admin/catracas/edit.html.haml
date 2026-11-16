@@ -1,0 +1,6 @@
+- content_for :title, "Editar Catraca · RU UnB"
+
+%section.card.painel
+  %p.sobretitulo Administração Geral · Restaurantes e Catracas
+  %h2.painel__titulo Editar #{format("Catraca %02d", @catraca.numero_was)} do #{@catraca.restaurante.nome}
+  = render "formulario", catraca: @catraca

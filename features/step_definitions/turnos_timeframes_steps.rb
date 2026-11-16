@@ -1,6 +1,6 @@
 Given('existem os seguintes turnos cadastrados:') do |table|
   table.hashes.each do |linha|
-    Turno.create!(nome: linha['turno'], inicio: linha['inicio'], fim: linha['fim'])
+    TipoRefeicao.create!(nome: linha['turno'], hora_inicio: linha['inicio'], hora_fim: linha['fim'])
   end
 end
 

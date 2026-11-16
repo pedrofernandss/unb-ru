@@ -1,0 +1,41 @@
+- content_for :title, "Comprovante · RU UnB"
+
+.pagina-cabecalho
+  .pagina-cabecalho__texto
+    %p.sobretitulo Portal do Estudante · Extrato · Comprovante
+    %h1 Comprovante nº #{format('%06d', @transacao.id)}
+  .pagina-cabecalho__acoes
+    = link_to extrato_path, class: "botao botao--secundario" do
+      = icon :arrow_left
+      Voltar ao extrato
+
+%section.card.painel.comprovante
+  %dl.comprovante__dados
+    %div
+      %dt Data e hora
+      %dd= l(@transacao.data_hora, format: "%d/%m/%Y %H:%M")
+    %div
+      %dt Refeição / Evento
+      %dd
+        %span.etiqueta{class: etiqueta_do_tipo(@transacao.tipo)}= @transacao.tipo
+    %div
+      %dt Local
+      %dd
+        = @transacao.local
+        - if @transacao.detalhe_local
+          %small= @transacao.detalhe_local
+    %div
+      %dt Método de acesso
+      %dd= @transacao.metodo || "—"
+    %div
+      %dt Valor
+      %dd
+        %strong{class: (@transacao.recarga? ? "tabela__valor--credito" : "tabela__valor--debito")}= moeda_assinada(@transacao.valor)
+    %div
+      %dt Titular
+      %dd
+        = current_user.nome
+        %small Matrícula #{current_user.matricula}
+  %p.painel__nota
+    = icon :shield_check
+    %span Registro auditável assinado digitalmente pelo Sistema de Acesso UnB.

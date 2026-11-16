@@ -1,60 +1,38 @@
-Given('que o estudante está logado no aplicativo \(Teste FastPass\)') do
-  @estudante = User.create!(
-    nome: 'Estudante Com Muita Fome',
-    matricula_disc: '261000004',
-    password: 'senha123'
-  )
-  login_as(@estudante, scope: :user)
+# O login usa o passo "que o estudante está logado no aplicativo" de
+# cardapio_atual_steps.rb, e o relógio volta ao normal em support/tempo.rb.
+# O início do turno é montado com a data de hoje: a coluna hora_inicio vem com a
+# data 2000-01-01, e viajar para ela levaria o relógio para fora do dia da inscrição.
+Given("ele se inscreveu no FastPass para a próxima refeição") do
+  turno = TipoRefeicao.find_or_create_by!(nome: "Almoço") { |t| t.hora_inicio = "12:00"; t.hora_fim = "14:00" }
+  janela = turno.time_frames.create!(inicio: "12:00", fim: "12:15")
+  @inscricao = InscricaoFastpass.create!(aluno: @estudante, time_frame: janela, data: Date.current)
+  @inicio_do_turno = Time.zone.parse(turno.hora_inicio.strftime("%H:%M"))
 end
 
-Given('ele se inscreveu no FastPass para a próxima refeição') do
-  @refeicao = Meal.create!(
-    tipo: 'Almoço',
-    opcao_padrao: 'Peixe ao molho branco gratinado.',
-    opcao_ovolacto: 'Ovos assados ao sugo',
-    opcao_veg_estrito: 'Refogado de grão de bico',
-    horario_inicio: Time.zone.parse('12:00:00'),
-  )
-
-  @inscricao = Subscription.create!(
-    user: @estudante,
-    meal: @refeicao,
-    status: 'nao_sorteado'
-  )
-end
-
-Given('ele acessa a página do Sorteio do FastPass') do
+Given("ele acessa a página do Sorteio do FastPass") do
   visit fastpass_path
 end
 
-When('a refeição não será servida dentro dos próximos 60 minutos') do
-  horario_distante = @refeicao.horario_inicio - 2.hours
-  travel_to(horario_distante)
+When("a refeição não será servida dentro dos próximos 60 minutos") do
+  travel_to(@inicio_do_turno - 2.hours)
   visit current_path
 end
 
-Then('o estudante deve ver um aviso dizendo: {string}') do |mensagem|
+Then("o estudante deve ver um aviso dizendo: {string}") do |mensagem|
   expect(page).to have_content(mensagem)
 end
 
-When('a refeição será servida dentro dos próximos 60 minutos') do
-  @inscricao.update!(status: 'sorteado_ganhou')
-  horario_proximo = @refeicao.horario_inicio - 30.minutes
-  travel_to(horario_proximo)
-
+When("a refeição será servida dentro dos próximos 60 minutos") do
+  @inscricao.update!(status: :contemplado)
+  travel_to(@inicio_do_turno - 30.minutes)
   visit current_path
 end
 
-Then('o estudante deve ver uma mensagem dizendo: {string}') do |mensagem_resultado|
+Then("o estudante deve ver uma mensagem dizendo: {string}") do |mensagem_resultado|
   expect(page).to have_content(mensagem_resultado)
 end
 
 Then('um painel com o resultado \({string} ou {string})') do |msg_ganhou, msg_perdeu|
-  expect(page).to have_css('#painel-resultado-fastpass')
+  expect(page).to have_css("#painel-resultado-fastpass")
   expect(page).to have_content(msg_ganhou).or have_content(msg_perdeu)
-end
-
-After do
-  # travel_back
-  # Libera o tempo do sistema (adicionar TimeHelpers)
 end

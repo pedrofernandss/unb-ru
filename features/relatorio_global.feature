@@ -7,12 +7,12 @@ Funcionalidade: Relatório Global de Acessos
   Contexto:
     Dado que eu estou logado como um administrador
     E existe o restaurante "RU Darcy Ribeiro" com 3 pisos e as seguintes catracas:
-      | nome       | piso |
-      | Catraca 01 | 1    |
-      | Catraca 04 | 2    |
+      | numero | piso |
+      | 1      | 1    |
+      | 4      | 2    |
     E existe o restaurante "RU Gama" com 1 pisos e as seguintes catracas:
-      | nome       | piso |
-      | Catraca 01 | 1    |
+      | numero | piso |
+      | 1      | 1    |
     E existem os seguintes acessos registrados:
       | data_hora        | restaurante      | catraca    | matricula | modalidade | status    | valor |
       | 15/10/2026 12:05 | RU Darcy Ribeiro | Catraca 01 | 221045999 | Comum      | Liberado  | 4.50  |
@@ -30,6 +30,12 @@ Funcionalidade: Relatório Global de Acessos
     Dado que eu acesso a página do relatório global
     Então a consolidação do restaurante "RU Darcy Ribeiro" deve exibir 2 acessos liberados e arrecadação de "R$ 9,00"
     E a consolidação do restaurante "RU Gama" deve exibir 1 acessos liberados e arrecadação de "R$ 4,50"
+
+  Cenário: Agrupar os acessos por catraca
+    Dado que eu acesso a página do relatório global
+    Então a consolidação da catraca "Catraca 01" do restaurante "RU Darcy Ribeiro" deve exibir 1 acessos liberados e arrecadação de "R$ 4,50"
+    E a consolidação da catraca "Catraca 04" do restaurante "RU Darcy Ribeiro" deve exibir 1 acessos liberados e arrecadação de "R$ 4,50"
+    E a consolidação da catraca "Catraca 01" do restaurante "RU Gama" deve exibir 1 acessos liberados e arrecadação de "R$ 4,50"
 
   Cenário: Filtrar os acessos por restaurante
     Dado que eu acesso a página do relatório global

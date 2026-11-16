@@ -17,10 +17,11 @@ end
 
 Given('o sistema possui as seguintes catracas cadastradas:') do |table|
   table.hashes.each do |linha|
-    restaurante = Restaurante.find_or_create_by!(nome: linha['restaurante'])
+    restaurante = restaurante_de_teste(linha['restaurante'])
     Catraca.create!(
       restaurante: restaurante,
-      identificacao: linha['catraca'],
+      numero: linha['catraca'].split.last.to_i,
+      piso: 1,
       online: linha['situacao'] == 'Online'
     )
   end
@@ -43,9 +44,12 @@ When('eu seleciono a catraca física {string}') do |identificacao|
 end
 
 Then('a minha sessão deve estar vinculada à catraca {string}') do |identificacao|
-  expect(@funcionario.reload.catraca_em_operacao.identificacao).to eq(identificacao)
+  expect(page).to have_css('.contexto-operacao', text: identificacao)
+  expect(@funcionario.reload.catraca).to be_nil
 end
 
 Then('a minha sessão não deve estar vinculada a nenhuma catraca') do
-  expect(@funcionario.reload.catraca_em_operacao).to be_nil
+  visit '/terminal-de-validacao'
+  expect(page).to have_current_path('/configuracao-de-ponto')
+  expect(@funcionario.reload.catraca).to be_nil
 end

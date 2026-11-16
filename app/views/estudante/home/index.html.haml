@@ -1,0 +1,54 @@
+- content_for :title, "Início · RU UnB"
+
+.pagina-cabecalho
+  .pagina-cabecalho__texto
+    %p.sobretitulo Portal do Estudante · Início
+    %h1 Olá, #{current_user.nome.split.first}
+
+.home-conteudo
+  .home-coluna-esquerda
+    %section.card.painel
+      %h2 Acesso Rápido
+      %p.painel__descricao
+        Consulte o seu
+        = link_to "extrato de refeições", extrato_path
+        para acompanhar recargas e utilizações.
+
+  .home-coluna-direita
+    %section.card.painel.painel-cardapio
+      .cardapio-cabecalho
+        %h2.cardapio-titulo
+          - if @refeicao_atual
+            Cardápio Oficial do #{@turno_atual.nome}
+          - else
+            Cardápio
+
+        - if @refeicao_atual
+          %p.cardapio-horario
+            Horário: #{@turno_atual.hora_inicio_formatada} às #{@turno_atual.hora_fim_formatada}
+
+      = form_with url: home_path, method: :get, local: true, class: "cardapio-controles" do
+        - if @restaurantes.any?
+          .cardapio-restaurante-linha
+            = label_tag :restaurante_id, "Restaurante Atual:", class: "cardapio-restaurante-label"
+            = select_tag :restaurante_id, options_from_collection_for_select(@restaurantes, :id, :nome, @restaurante&.id), class: "campo__controle cardapio-restaurante-select"
+
+        .cardapio-atualizacao-linha
+          = submit_tag "Atualizar Cardápio", class: "botao botao--primario"
+          %span.cardapio-ultima-atualizacao
+            Atualizado pela última vez: #{l(@agora.to_date, format: :short)} às #{@agora.strftime("%H:%M")}
+
+      - if @refeicao_atual
+        %p.cardapio-linha-status Refeição em serviço
+
+        .cardapio-opcoes-lista
+          - @refeicao_atual.opcoes_estruturadas.each do |opcao|
+            .cardapio-opcao-painel
+              %h4.cardapio-opcao-painel__titulo= opcao[:titulo]
+              - opcao[:linhas].each do |categoria, alimento|
+                %p.cardapio-opcao-painel__linha
+                  %strong #{categoria}:
+                  = alimento
+      - else
+        %p.cardapio-linha-status Nenhuma refeição em serviço
+        %p.painel__descricao Nenhum cardápio disponível

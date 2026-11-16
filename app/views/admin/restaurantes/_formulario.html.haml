@@ -1,0 +1,26 @@
+- if restaurante.errors.any?
+  .alerta.alerta--erro{role: "alert"}
+    = icon :circle_alert
+    %ul.alerta__lista
+      - restaurante.errors.full_messages.each do |mensagem|
+        %li= mensagem
+
+= form_with model: [ :admin, restaurante ], class: "formulario" do |f|
+  .campo{class: ("campo--erro" if restaurante.errors[:nome].any?)}
+    .campo__cabecalho
+      = f.label :nome, "Nome da Unidade"
+    .campo__entrada
+      = icon :utensils
+      = f.text_field :nome, placeholder: "Ex.: RU Gama"
+  .campo{class: ("campo--erro" if restaurante.errors[:numero_de_pisos].any?)}
+    .campo__cabecalho
+      = f.label :numero_de_pisos, "Número de Pisos"
+    .campo__entrada
+      -# text_field e não number_field: o valor inválido precisa chegar ao servidor para virar mensagem.
+      = icon :map_pin
+      = f.text_field :numero_de_pisos, inputmode: "numeric"
+
+  = f.button class: "botao botao--primario" do
+    = icon :save
+    Salvar
+  = link_to "Cancelar", admin_restaurantes_path, class: "botao botao--texto"

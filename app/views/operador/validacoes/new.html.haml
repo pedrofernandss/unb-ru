@@ -1,0 +1,51 @@
+.pagina-cabecalho
+  %div
+    %p.sobretitulo Terminal Operacional
+    %h1 Terminal de Validação
+= render "operador/contexto"
+.terminal-grade
+  .card.painel
+    %h2 Leitura de QR Code
+    = form_with url: terminal_de_validacao_path, class: "formulario", data: { turbo: false } do
+      = hidden_field_tag :chave, @chave
+      %fieldset.modos-validacao
+        %legend Modo Operacional da Catraca
+        %label
+          = radio_button_tag :modo, "Comum", params[:modo] != "FastPass"
+          Modo Comum
+        %label
+          = radio_button_tag :modo, "FastPass", params[:modo] == "FastPass"
+          Modo FastPass
+      .campo
+        = label_tag :matricula, "QR Code ou Matrícula"
+        = text_field_tag :matricula, nil, required: true, autofocus: true, placeholder: "Leia o QR Code ou digite a matrícula", class: "campo__controle", autocomplete: "off"
+        %small Informe o QR Code ou a matrícula lida pelo terminal.
+      = submit_tag "Validar", class: "botao botao--primario"
+    - if Rails.env.local?
+      %p.painel__nota Catraca simulada neste ambiente de demonstração.
+  .card.painel.painel-de-resultado{role: "status"}
+    - if @resultado
+      %h2{class: "resultado--#{@resultado.estado}"}= @resultado.resultado
+      %p= @resultado.motivo
+      - if @resultado.entrega_pendente?
+        %p.painel__nota
+          A refeição já foi debitada e a catraca ainda não confirmou o comando.
+          Reenvie esta mesma leitura: não há novo débito. Não leia o QR Code outra vez.
+        = form_with url: terminal_de_validacao_path, id: "formulario-reenvio", class: "formulario", data: { turbo: false } do
+          = hidden_field_tag :chave, @chave_em_entrega, id: "chave-reenvio"
+          = hidden_field_tag :matricula, @resultado.matricula, id: "matricula-reenvio"
+          = hidden_field_tag :modo, @resultado.modo, id: "modo-reenvio"
+          = submit_tag "Reenviar comando à catraca", class: "botao botao--secundario"
+      - if @resultado.aluno
+        %p Discente: #{@resultado.aluno.nome}
+      %p Matrícula: #{@resultado.matricula}
+      - if @resultado.transacao
+        %p Refeição: #{@resultado.transacao.tipo} (#{number_to_currency(@resultado.transacao.valor.abs)})
+      - if @resultado.aluno
+        %p Saldo atual: #{number_to_currency(@resultado.aluno.reload.saldo)}
+      %p Horário da leitura: #{l(@resultado.data_hora, format: :short)}
+    - else
+      %h2 Aguardando leitura
+      %p Posicione o QR Code no leitor ou informe a matrícula.
+    %p.painel__nota Critério de Horário Exato · Tolerância Zero Ativa · Fim da janela inclusivo
+= render "operador/historicos", historicos: @historicos

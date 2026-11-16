@@ -2,8 +2,11 @@
 # O helper valor_em_reais vive em features/support/helpers.rb
 
 Given('a minha sessão está vinculada à catraca {string}') do |identificacao|
-  @catraca = Catraca.find_by!(identificacao: identificacao)
-  @funcionario.update!(catraca_em_operacao: @catraca)
+  @catraca = Catraca.find_by!(numero: identificacao.split.last.to_i)
+  visit '/configuracao-de-ponto'
+  choose @catraca.restaurante.nome
+  choose identificacao
+  click_button 'Confirmar e Iniciar Operação'
 end
 
 # Cada linha é um estudante contemplado no sorteio e a janela de horário que ele tirou.
@@ -15,13 +18,9 @@ Given('o sorteio do FastPass do turno {string} teve o seguinte resultado:') do |
       password: 'senha123'
     )
     inicio, fim = linha['janela'].split(' - ')
-    SorteioFastpass.create!(
-      user: estudante,
-      turno: turno,
-      janela_inicio: inicio,
-      janela_fim: fim,
-      contemplado: true
-    )
+    tipo = TipoRefeicao.find_or_create_by!(nome: turno) { |t| t.hora_inicio = '11:00'; t.hora_fim = '14:00' }
+    janela = tipo.time_frames.find_or_create_by!(inicio: inicio, fim: fim)
+    InscricaoFastpass.create!(aluno: estudante, time_frame: janela, data: Date.current, status: :contemplado)
   end
 end
 
@@ -31,11 +30,10 @@ end
 
 # A leitura é disparada com um horário fixo para que o critério de janela seja determinístico.
 When('a catraca lê o QR Code da matrícula {string} às {string}') do |matricula, horario|
-  ValidacaoDeAcesso.processar!(
-    catraca: @catraca,
-    matricula: matricula,
-    lido_em: Time.zone.parse(horario)
-  )
+  travel_to Time.zone.parse("#{Date.current.iso8601} #{horario}")
+  fill_in 'QR Code', with: matricula
+  choose 'Modo FastPass'
+  click_button 'Validar'
 end
 
 Then('o terminal deve exibir {string}') do |resultado|

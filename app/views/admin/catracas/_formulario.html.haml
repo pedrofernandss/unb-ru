@@ -1,0 +1,38 @@
+- if catraca.errors.any?
+  .alerta.alerta--erro{role: "alert"}
+    = icon :circle_alert
+    %ul.alerta__lista
+      - catraca.errors.full_messages.each do |mensagem|
+        %li= mensagem
+
+= form_with model: [ :admin, catraca ], class: "formulario" do |f|
+  .campo{class: ("campo--erro" if catraca.errors[:restaurante].any?)}
+    .campo__cabecalho
+      = f.label :restaurante_id, "Restaurante"
+    .campo__entrada
+      = icon :utensils
+      -# Na edição o restaurante é fixo: os acessos já registrados pertencem a esta unidade.
+      = f.collection_select :restaurante_id, Restaurante.order(:nome), :id, :nome, { prompt: "Selecione" }, disabled: catraca.persisted?
+  .campo-linha
+    .campo{class: ("campo--erro" if catraca.errors[:numero].any?)}
+      .campo__cabecalho
+        = f.label :numero, "Número da Catraca"
+      .campo__entrada
+        = icon :qr_code
+        = f.text_field :numero, inputmode: "numeric", placeholder: "Ex.: 4"
+    .campo{class: ("campo--erro" if catraca.errors[:piso].any?)}
+      .campo__cabecalho
+        = f.label :piso, "Piso"
+      .campo__entrada
+        = icon :map_pin
+        = f.text_field :piso, inputmode: "numeric", placeholder: "Ex.: 2"
+  -# Online/offline de catraca já cadastrada é feito na lista, que pede confirmação.
+  - unless catraca.persisted?
+    .campo-caixa
+      = f.check_box :online
+      = f.label :online, "Catraca online (disponível para o Terminal Operacional)"
+
+  = f.button class: "botao botao--primario" do
+    = icon :save
+    Salvar
+  = link_to "Cancelar", admin_restaurantes_path, class: "botao botao--texto"

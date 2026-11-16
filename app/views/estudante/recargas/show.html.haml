@@ -1,0 +1,16 @@
+.pagina-cabecalho
+  %div
+    %p.sobretitulo Portal do Estudante
+    %h1 Resumo do pagamento
+.card.painel.resumo-recarga
+  %h2 #{@recarga.quantidade} refeições
+  %p Método: #{@recarga.metodo}
+  %p Total da recarga
+  %strong.indicador__valor= number_to_currency(@recarga.valor)
+  %p Status: #{@recarga.status}
+  - if @recarga.pendente?
+    - if Rails.env.local?
+      %p.alerta Ambiente de demonstração: pagamento simulado, sem cobrança bancária.
+    = button_to "Concluir pagamento", confirmar_recarga_path(@recarga), class: "botao botao--primario", data: { turbo: false }
+  = link_to "Nova recarga", nova_recarga_path, class: "botao botao--secundario"
+  = link_to "Ver extrato", extrato_path, class: "botao botao--secundario"

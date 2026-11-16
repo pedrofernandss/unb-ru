@@ -1,0 +1,27 @@
+.card.filtros-de-auditoria
+  .filtros-de-auditoria__cabecalho
+    %h2
+      = icon :filter
+      Filtros de auditoria e consulta
+    = link_to extrato_path, class: "ligacao-discreta" do
+      = icon :eraser
+      Limpar filtros
+
+  = form_with url: extrato_path, method: :get, class: "filtros-de-auditoria__formulario" do |f|
+    .campo
+      = f.label :data_inicial, "Data inicial"
+      = f.date_field :data_inicial, value: extrato.data_inicial, class: "campo__controle"
+    .campo
+      = f.label :data_final, "Data final"
+      = f.date_field :data_final, value: extrato.data_final, class: "campo__controle"
+    .campo
+      = f.label :tipo, "Refeição / Evento"
+      = f.select :tipo, options_for_select(extrato.tipos_disponiveis, extrato.tipo), { include_blank: "Todas as refeições" }, class: "campo__controle"
+    .campo
+      = f.label :restaurante_id, "Restaurante"
+      = f.select :restaurante_id, options_from_collection_for_select(extrato.restaurantes_disponiveis, :id, :nome, extrato.restaurante_id&.to_i), { include_blank: "Todos os restaurantes" }, class: "campo__controle"
+    .campo
+      = f.label :metodo, "Forma de acesso"
+      = f.select :metodo, options_for_select(extrato.metodos_disponiveis, extrato.metodo), { include_blank: "Todos os métodos" }, class: "campo__controle"
+    .filtros-de-auditoria__acao
+      = f.button "Aplicar filtros", class: "botao botao--primario"

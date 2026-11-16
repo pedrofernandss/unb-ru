@@ -1,9 +1,127 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# Dados iniciais do UnB-RU. Idempotente: pode ser executado várias vezes
+# (bin/rails db:seed) sem duplicar registros.
+
+puts "Semeando universidade, campi e restaurantes..."
+unb = Universidade.find_or_create_by!(nome: "Universidade de Brasília")
+
+restaurantes = {
+  "Darcy Ribeiro" => "RU Darcy Ribeiro",
+  "Gama" => "RU Gama",
+  "Ceilândia" => "RU Ceilândia",
+  "Planaltina" => "RU Planaltina"
+}.map do |nome_campus, nome_restaurante|
+  campus = unb.campi.find_or_create_by!(nome: nome_campus)
+  Restaurante.find_or_create_by!(campus: campus) { |r| r.nome = nome_restaurante }
+end
+
+puts "Semeando catracas (online, para o terminal operacional funcionar)..."
+# A coluna `online` nasce false na migration, então sem isto nenhuma catraca
+# fica selecionável no ponto de acesso e o terminal só funciona nos testes.
+# Só vale na criação: a disponibilidade de uma catraca já cadastrada é da
+# administração do restaurante (#8), e o seed não desfaz o que o admin mudou.
+restaurantes.each_with_index do |restaurante, indice|
+  pisos = indice.zero? ? [ 1, 1, 2, 2 ] : [ 1, 1 ]
+  restaurante.update!(numero_de_pisos: pisos.max) if restaurante.numero_de_pisos < pisos.max
+  pisos.each_with_index do |piso, i|
+    restaurante.catracas.find_or_create_by!(numero: i + 1) do |c|
+      c.piso = piso
+      c.online = true
+    end
+  end
+end
+
+puts "Semeando tipos de refeição..."
+# A tarifa é por turno: o café da manhã é mais barato que almoço e jantar,
+# como o histórico do aluno de exemplo mais abaixo já mostrava.
+tipos = {
+  "cafe_da_manha" => [ "Café da manhã", "07:00", "09:30", "2.50" ],
+  "almoco" => [ "Almoço", "11:00", "14:30", "4.50" ],
+  "jantar" => [ "Jantar", "17:00", "19:30", "4.50" ]
+}.to_h do |chave, (nome, inicio, fim, tarifa)|
+  # Os horários entram só na criação. Reatribuí-los a cada db:seed disparava o
+  # after_update :descartar_time_frames do turno, que apaga as janelas e, em
+  # cascata, as inscrições do FastPass — e ainda desfazia o horário do admin.
+  tipo = TipoRefeicao.find_or_create_by!(nome: nome) do |t|
+    t.hora_inicio = inicio
+    t.hora_fim = fim
+    t.tarifa = tarifa
+  end
+  tipo.update!(tarifa: tarifa) if tipo.tarifa != BigDecimal(tarifa)
+  [ chave, tipo ]
+end
+
+puts "Semeando time-frames do FastPass (janelas de 15 min, tolerância de 3 min)..."
+tipos.each_value do |tipo|
+  next if tipo.time_frames.any?
+
+  tipo.configurar_time_frames(granularidade: 15, tolerancia: 3) ||
+    raise("Time-frames inválidos para #{tipo.nome}: #{tipo.errors.full_messages.to_sentence}")
+end
+
+puts "Semeando usuários (senha de todos: senha123)..."
+[
+  { nome: "Administrador do Sistema", matricula: "1000001", perfil: :administrador },
+  { nome: "Funcionário do RU", matricula: "1984201", perfil: :funcionario },
+  { nome: "Aluno de Exemplo", matricula: "2023123456", perfil: :aluno, saldo: 50 }
+].each do |atributos|
+  User.find_or_create_by!(matricula: atributos[:matricula]) do |u|
+    u.assign_attributes(atributos.merge(password: "senha123"))
+  end
+end
+
+puts "Semeando cardápio da semana atual a partir de cardapio.json..."
+cardapio = JSON.parse(Rails.root.join("cardapio.json").read)
+dias = %w[segunda-feira terca-feira quarta-feira quinta-feira sexta-feira sabado domingo]
+inicio_da_semana = Date.current.beginning_of_week(:monday)
+
+restaurantes.each do |restaurante|
+  dias.each_with_index do |dia, deslocamento|
+    cardapio.fetch(dia, {}).each do |chave_refeicao, pratos|
+      tipo = tipos[chave_refeicao] or next
+      prefixo = chave_refeicao == "cafe_da_manha" ? "complemento" : "prato_principal"
+
+      refeicao = restaurante.refeicoes.find_or_initialize_by(
+        tipo_refeicao: tipo,
+        data: inicio_da_semana + deslocamento
+      )
+      refeicao.assign_attributes(
+        opcao_normal: pratos["#{prefixo}_padrao"],
+        opcao_ovolactovegetariana: pratos["#{prefixo}_ovolactovegetariano"],
+        opcao_vegetariana_estrita: pratos["#{prefixo}_vegetariano_estrito"],
+        itens_extras: pratos
+      )
+      refeicao.save!
+    end
+  end
+end
+
+puts "Semeando extrato de exemplo do aluno..."
+aluno = User.find_by!(matricula: "2023123456")
+if aluno.transacoes.none?
+  ru = restaurantes.first
+  catracas = ru.catracas.order(:numero).to_a
+  agora = Time.current
+  aluno.transacoes.create!([
+    { data_hora: agora - 6.days, tipo: "Recarga de Saldo", metodo: "PIX", valor: 45 },
+    { data_hora: agora - 5.days + 12.hours, tipo: "Almoço", metodo: "QR Code App", valor: -4.5, restaurante: ru, catraca: catracas[0] },
+    { data_hora: agora - 4.days + 19.hours, tipo: "Jantar", metodo: "QR Code App", valor: -4.5, restaurante: ru, catraca: catracas[2] },
+    { data_hora: agora - 2.days + 7.hours, tipo: "Café da Manhã", metodo: "QR Code App", valor: -2.5, restaurante: ru, catraca: catracas[1] },
+    { data_hora: agora - 1.day + 12.hours, tipo: "Almoço", metodo: "QR Code App", valor: -4.5, restaurante: ru, catraca: catracas[3] },
+    { data_hora: agora - 1.hour, tipo: "Almoço", metodo: "QR Code App", valor: -4.5, restaurante: ru, catraca: catracas[0] }
+  ])
+end
+
+puts "Semeando funcionário e alunos para validação de saldo..."
+[
+  { nome: "Estudante Sem Saldo", matricula: "26100001", perfil: :aluno, saldo: 0.0, qr_code: "QRCODE_001_SSALDO" },
+  { nome: "Estudante Com Saldo", matricula: "26100002", perfil: :aluno, saldo: 50.0, qr_code: "QRCODE_002_CSALDO" }
+].each do |atributos|
+User.find_or_create_by!(matricula: atributos[:matricula]) do |u|
+    u.assign_attributes(atributos.merge(password: "senha123"))
+  end
+end
+
+puts "Pronto: #{Universidade.count} universidade, #{Campus.count} campi, #{Restaurante.count} restaurantes, " \
+     "#{Catraca.count} catracas (#{Catraca.where(online: true).count} online), " \
+     "#{TipoRefeicao.count} tipos de refeição, #{TimeFrame.count} time-frames, " \
+     "#{Refeicao.count} refeições, #{InscricaoFastpass.count} inscrições no FastPass, #{User.count} usuários."

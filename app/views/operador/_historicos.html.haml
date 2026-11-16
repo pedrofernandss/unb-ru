@@ -1,0 +1,26 @@
+.card.lancamentos
+  .lancamentos__cabecalho
+    %h2 Últimos registros desta catraca
+  - if historicos.empty?
+    .estado-vazio
+      %p Nenhum registro de acesso nesta catraca.
+  - else
+    .tabela-rolavel
+      %table.tabela.acessos
+        %thead
+          %tr
+            %th Horário
+            %th Matrícula (Discente)
+            %th Modo de Validação
+            %th Tarifa
+            %th Status da Catraca
+            %th Motivo
+        %tbody
+          - historicos.each do |historico|
+            %tr
+              %td= historico.data_hora.strftime("%d/%m/%Y %H:%M:%S")
+              %td= historico.aluno.matricula
+              %td= historico.modo_validacao
+              %td= number_to_currency(historico.tarifa, unit: "R$", separator: ",", delimiter: ".", format: "%u%n")
+              %td= historico.status
+              %td= historico.motivo

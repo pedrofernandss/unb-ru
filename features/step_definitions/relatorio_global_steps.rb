@@ -1,13 +1,19 @@
 Given('existem os seguintes acessos registrados:') do |table|
   table.hashes.each do |linha|
     restaurante = Restaurante.find_by!(nome: linha['restaurante'])
-    Acesso.create!(
-      catraca: restaurante.catracas.find_by!(nome: linha['catraca']),
-      matricula: linha['matricula'],
-      data_hora: DateTime.strptime(linha['data_hora'], '%d/%m/%Y %H:%M'),
-      modalidade: linha['modalidade'],
+    catraca = restaurante.catracas.find { |c| c.identificacao == linha['catraca'] }
+    aluno = User.find_or_create_by!(matricula: linha['matricula']) do |u|
+      u.nome = "Aluno #{linha['matricula']}"
+      u.password = 'senha123'
+    end
+
+    HistoricoCatraca.create!(
+      catraca: catraca,
+      aluno: aluno,
+      data_hora: Time.zone.strptime(linha['data_hora'], '%d/%m/%Y %H:%M'),
+      modo_validacao: linha['modalidade'],
       status: linha['status'],
-      valor: linha['valor'].to_d
+      tarifa: linha['valor'].to_d
     )
   end
 end
@@ -42,6 +48,14 @@ end
 
 Then('a consolidação do restaurante {string} deve exibir {int} acessos liberados e arrecadação de {string}') do |restaurante, acessos, valor|
   linha = find('table.consolidacao tbody tr', text: restaurante)
+  expect(linha).to have_css('.acessos', text: acessos.to_s)
+  expect(linha).to have_css('.arrecadacao', text: valor)
+end
+
+Then('a consolidação da catraca {string} do restaurante {string} deve exibir {int} acessos liberados e arrecadação de {string}') do |catraca, restaurante, acessos, valor|
+  linha = all('table.consolidacao-catracas tbody tr').find do |tr|
+    tr.find('.unidade').text == restaurante && tr.find('.catraca').text == catraca
+  end
   expect(linha).to have_css('.acessos', text: acessos.to_s)
   expect(linha).to have_css('.arrecadacao', text: valor)
 end

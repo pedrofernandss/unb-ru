@@ -2,12 +2,12 @@
 
 Given('eu possuo os seguintes lançamentos no meu histórico:') do |table|
   table.hashes.each do |linha|
-    restaurante = Restaurante.find_or_create_by!(nome: linha['restaurante'])
-    Lancamento.create!(
-      user: @estudante,
+    restaurante = restaurante_de_teste(linha['restaurante'])
+    Transacao.create!(
+      aluno: @estudante,
       restaurante: restaurante,
-      ocorrido_em: DateTime.strptime(linha['data_hora'], '%d/%m/%Y %H:%M'),
-      evento: linha['evento'],
+      data_hora: Time.zone.strptime(linha['data_hora'], '%d/%m/%Y %H:%M'),
+      tipo: linha['evento'],
       valor: linha['valor'].to_d
     )
   end
