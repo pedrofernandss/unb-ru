@@ -8,14 +8,7 @@ module Estudante
       return redirect_to(fastpass_path, alert: "Escolha um horário") unless time_frame
 
       inscricao = current_user.inscricoes_fastpass.new(time_frame: time_frame, data: Date.current)
-      # Na última hora o resultado já saiu: quem se inscrevesse agora não poderia cancelar.
-      if inscricao.resultado_liberado?
-        redirect_to fastpass_path, alert: "As inscrições para o #{time_frame.tipo_refeicao.nome} de hoje já foram encerradas"
-      elsif salvar(inscricao)
-        redirect_to fastpass_path, notice: "Inscrição no sorteio realizada com sucesso"
-      else
-        redirect_to fastpass_path, alert: inscricao.errors.full_messages.to_sentence
-      end
+      redirect_to fastpass_path, **resultado_da_inscricao(inscricao)
     end
 
     # Busca só entre as inscrições do aluno logado: a de outro aluno dá 404.
@@ -34,6 +27,18 @@ module Estudante
     end
 
     private
+
+    # Mensagem flash da tentativa de inscrição. Na última hora o resultado já saiu:
+    # quem se inscrevesse agora não poderia cancelar.
+    def resultado_da_inscricao(inscricao)
+      if inscricao.resultado_liberado?
+        { alert: "As inscrições para o #{inscricao.time_frame.tipo_refeicao.nome} de hoje já foram encerradas" }
+      elsif salvar(inscricao)
+        { notice: "Inscrição no sorteio realizada com sucesso" }
+      else
+        { alert: inscricao.errors.full_messages.to_sentence }
+      end
+    end
 
     # Dois envios ao mesmo tempo passam os dois pela validação; o índice único do
     # banco barra o segundo, que recebe a mesma mensagem da validação.
