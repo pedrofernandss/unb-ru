@@ -7,11 +7,8 @@ class Extrato
 
   def initialize(aluno, filtros = {})
     @aluno = aluno
-    @data_inicial = interpretar_data(filtros[:data_inicial]) || Date.current.beginning_of_month
-    @data_final = interpretar_data(filtros[:data_final]) || Date.current.end_of_month
-    @tipo = filtros[:tipo].presence
-    @restaurante_id = filtros[:restaurante_id].presence
-    @metodo = filtros[:metodo].presence
+    definir_periodo(filtros)
+    @tipo, @restaurante_id, @metodo = filtros.values_at(:tipo, :restaurante_id, :metodo).map(&:presence)
     @pagina = [ filtros[:pagina].to_i, 1 ].max
   end
 
@@ -61,6 +58,13 @@ class Extrato
   end
 
   private
+
+  # Data ausente ou inválida cai no mês corrente.
+  def definir_periodo(filtros)
+    hoje = Date.current
+    @data_inicial = interpretar_data(filtros[:data_inicial]) || hoje.beginning_of_month
+    @data_final = interpretar_data(filtros[:data_final]) || hoje.end_of_month
+  end
 
   # Aceita "2024-05-01" (input type=date) e "01/05/2024".
   def interpretar_data(valor)
