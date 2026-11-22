@@ -5,16 +5,27 @@ module Estudante
     before_action :exigir_aluno
 
     def show
-      @turnos = TipoRefeicao.where(id: TimeFrame.select(:tipo_refeicao_id)).includes(:time_frames).em_ordem
-      inscricoes = current_user.inscricoes_fastpass.where(data: Date.current)
-                               .includes(time_frame: :tipo_refeicao).to_a
+      @turnos = turnos_com_janelas
+      inscricoes = inscricoes_de_hoje
       @inscricoes = inscricoes.index_by { |inscricao| inscricao.time_frame.tipo_refeicao_id }
       avisar_inscricao_duplicada(inscricoes)
-      # Na ordem dos turnos, só as inscrições cujo resultado já foi divulgado.
-      @resultados = @turnos.filter_map { |turno| @inscricoes[turno.id] }.select(&:resultado_liberado?)
+      @resultados = resultados_divulgados
     end
 
     private
+
+    def turnos_com_janelas
+      TipoRefeicao.where(id: TimeFrame.select(:tipo_refeicao_id)).includes(:time_frames).em_ordem
+    end
+
+    def inscricoes_de_hoje
+      current_user.inscricoes_fastpass.where(data: Date.current).includes(time_frame: :tipo_refeicao).to_a
+    end
+
+    # Na ordem dos turnos, só as inscrições cujo resultado já foi divulgado.
+    def resultados_divulgados
+      @turnos.filter_map { |turno| @inscricoes[turno.id] }.select(&:resultado_liberado?)
+    end
 
     # A página mostra uma inscrição por turno. Se a corrida documentada em InscricaoFastpass
     # criar duas no mesmo turno, uma fica escondida; o log deixa isso visível para o admin.
