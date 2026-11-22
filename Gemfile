@@ -63,6 +63,9 @@ group :development, :test do
   gem "rspec-rails", "~> 8.0"
 
   gem "database_cleaner"
+
+  # Qualidade do código (Sprint 3): Flog/Reek/Flay para o ABC score por método.
+  gem "rubycritic", require: false
 end
 
 group :development do
