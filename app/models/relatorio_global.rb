@@ -67,13 +67,16 @@ class RelatorioGlobal
   # { id => [acessos, liberados, fastpass, arrecadação] }, somado no banco sem carregar os acessos.
   def somar_por(coluna)
     grupos = acessos.unscope(:order, :includes).group(coluna)
-    liberados = grupos.liberados.count
-    fastpass = grupos.fastpass.count
-    arrecadado = grupos.liberados.sum(:tarifa)
+    parciais = somas_parciais(grupos)
 
     grupos.count.to_h do |id, total|
-      [ id, [ total, liberados.fetch(id, 0), fastpass.fetch(id, 0), arrecadado.fetch(id, 0) ] ]
+      [ id, [ total, *parciais.map { |soma| soma.fetch(id, 0) } ] ]
     end
+  end
+
+  # Na ordem dos campos das consolidações: liberados, FastPass e arrecadação.
+  def somas_parciais(grupos)
+    [ grupos.liberados.count, grupos.fastpass.count, grupos.liberados.sum(:tarifa) ]
   end
 
   def consultar
