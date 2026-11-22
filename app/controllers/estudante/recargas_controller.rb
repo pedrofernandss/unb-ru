@@ -10,18 +10,13 @@ module Estudante
 
     def create
       @chave = params[:chave]
-      usuario_id, chave = verificador.verified(@chave, purpose: :recarga)
-      return head :unprocessable_entity unless usuario_id == current_user.id && chave.present?
+      chave = chave_verificada
+      return head :unprocessable_entity unless chave
 
-      @recarga = current_user.recargas.find_by(chave: chave)
-      unless @recarga
-        @recarga = current_user.recargas.build(chave: chave,
-          quantidade: params[:outra_quantidade].presence || params[:quantidade], metodo: params[:metodo])
-        return render :new, status: :unprocessable_entity unless @recarga.save
-      end
+      @recarga = recarga_da_chave(chave)
+      return render :new, status: :unprocessable_entity unless @recarga.persisted?
+
       redirect_to recarga_path(@recarga), status: :see_other
-    rescue ActiveRecord::RecordNotUnique
-      redirect_to recarga_path(current_user.recargas.find_by!(chave: chave)), status: :see_other
     end
 
     def show
@@ -44,6 +39,26 @@ module Estudante
     private
 
     def verificador = Rails.application.message_verifier(:recarga)
+
+    # A chave assinada em #new só vale para o aluno que abriu o formulário.
+    def chave_verificada
+      usuario_id, chave = verificador.verified(@chave, purpose: :recarga)
+      chave if usuario_id == current_user.id && chave.present?
+    end
+
+    # Reenviar o mesmo formulário devolve a recarga já criada, sem abrir outra.
+    def recarga_da_chave(chave)
+      current_user.recargas.find_by(chave: chave) || nova_recarga(chave)
+    end
+
+    def nova_recarga(chave)
+      current_user.recargas.create(chave: chave, quantidade: quantidade_informada, metodo: params[:metodo])
+    rescue ActiveRecord::RecordNotUnique
+      # Envio duplo simultâneo: a outra requisição gravou a mesma chave primeiro.
+      current_user.recargas.find_by!(chave: chave)
+    end
+
+    def quantidade_informada = params[:outra_quantidade].presence || params[:quantidade]
 
     # O pacote é cobrado pela tarifa de referência; a lista de turnos deixa
     # visível que cada refeição tem seu próprio preço na catraca.
