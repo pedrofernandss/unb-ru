@@ -30,12 +30,18 @@ class ProcessamentoAcesso < ApplicationRecord
   # sem novo débito. O adaptador deve deduplicar a mesma chave no dispositivo.
   def enviar_comando!(dispositivo: Catracas.dispositivo)
     with_lock do
-      return if comando_enviado_em?
-      return unless dispositivo.disponivel? && catraca.reload.online?
-
-      if dispositivo.enviar(catraca: catraca, comando: comando, evento_id: chave)
-        update!(comando_enviado_em: Time.current)
-      end
+      entregar_comando(dispositivo) if pode_enviar?(dispositivo)
     end
+  end
+
+  private
+
+  # Envia uma única vez, e só com dispositivo e catraca disponíveis no momento do envio.
+  def pode_enviar?(dispositivo)
+    !comando_enviado_em? && dispositivo.disponivel? && catraca.reload.online?
+  end
+
+  def entregar_comando(dispositivo)
+    update!(comando_enviado_em: Time.current) if dispositivo.enviar(catraca: catraca, comando: comando, evento_id: chave)
   end
 end
