@@ -31,8 +31,11 @@ class Catraca < ApplicationRecord
   def numero_unico_no_restaurante
     return unless restaurante_id && numero
 
-    duplicada = Catraca.where(restaurante_id: restaurante_id, numero: numero).where.not(id: id).exists?
-    errors.add(:base, :numero_em_uso) if duplicada
+    errors.add(:base, :numero_em_uso) if outra_com_o_mesmo_numero?
+  end
+
+  def outra_com_o_mesmo_numero?
+    Catraca.where(restaurante_id: restaurante_id, numero: numero).where.not(id: id).exists?
   end
 
   def piso_existe_no_restaurante
