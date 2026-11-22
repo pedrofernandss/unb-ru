@@ -23,7 +23,7 @@ class TipoRefeicao < ApplicationRecord
 
   # Ordena pela hora local. O ORDER BY do banco usa os horários em UTC, e um turno
   # depois das 22:00 passa da meia-noite e vai para o começo da lista (#39).
-  def self.em_ordem = all.sort_by { |turno| turno.hora_inicio.strftime("%H:%M") }
+  def self.em_ordem = all.sort_by(&:hora_inicio_formatada)
 
   def self.vigente_em(agora = Time.current)
     momento = agora.in_time_zone
@@ -84,12 +84,13 @@ class TipoRefeicao < ApplicationRecord
 
   def recriar_time_frames
     time_frames.destroy_all
-    quantidade = duracao_em_minutos / granularidade_minutos
-    quantidade.times do |i|
-      time_frames.create!(inicio: hora_inicio + (i * granularidade_minutos).minutes,
-                          fim: hora_inicio + ((i + 1) * granularidade_minutos).minutes)
+    (duracao_em_minutos / granularidade_minutos).times do |i|
+      time_frames.create!(inicio: inicio_da_janela(i), fim: inicio_da_janela(i + 1))
     end
   end
+
+  # A janela de índice i começa i granularidades depois do início do turno.
+  def inicio_da_janela(indice) = hora_inicio + (indice * granularidade_minutos).minutes
 
   # Sem janelas, a configuração antiga deixa de valer e o admin configura de novo.
   def descartar_time_frames
@@ -97,21 +98,27 @@ class TipoRefeicao < ApplicationRecord
     update_columns(granularidade_minutos: nil, tolerancia_minutos: nil)
   end
 
+  # Registra só o primeiro problema encontrado.
   def granularidade_valida
-    if !granularidade_minutos_before_type_cast.to_s.match?(NUMERO_INTEIRO)
-      errors.add(:base, :granularidade_nao_numerica)
-    elsif granularidade_minutos <= 0
-      errors.add(:base, :granularidade_nao_positiva)
-    elsif hora_inicio && hora_fim && duracao_em_minutos % granularidade_minutos != 0
-      errors.add(:base, :granularidade_nao_divide, duracao: duracao_em_minutos)
-    end
+    return errors.add(:base, :granularidade_nao_numerica) unless numero_inteiro?(granularidade_minutos_before_type_cast)
+    return errors.add(:base, :granularidade_nao_positiva) unless granularidade_minutos.positive?
+
+    errors.add(:base, :granularidade_nao_divide, duracao: duracao_em_minutos) unless granularidade_divide_o_turno?
+  end
+
+  # Sem os dois horários não há duração para dividir; a validação de horário cuida disso.
+  def granularidade_divide_o_turno?
+    !(hora_inicio && hora_fim) || (duracao_em_minutos % granularidade_minutos).zero?
   end
 
   def tolerancia_valida
-    unless tolerancia_minutos_before_type_cast.to_s.match?(NUMERO_INTEIRO) && tolerancia_minutos >= 0
+    unless numero_inteiro?(tolerancia_minutos_before_type_cast) && tolerancia_minutos >= 0
       errors.add(:base, :tolerancia_invalida)
     end
   end
+
+  # Confere o texto digitado: o Rails converteria "abc" ou "1.5" em número.
+  def numero_inteiro?(valor) = valor.to_s.match?(NUMERO_INTEIRO)
 
   # O Rails converte "25:00" em nil; o texto digitado continua em *_before_type_cast.
   def horario_invalido?
@@ -136,10 +143,15 @@ class TipoRefeicao < ApplicationRecord
   def sem_sobreposicao
     return if errors.any?
 
-    inicio, fim = hora_inicio.strftime("%H:%M"), hora_fim.strftime("%H:%M")
-    outro = TipoRefeicao.where.not(id: id).em_ordem.detect do |turno|
-      turno.hora_inicio.strftime("%H:%M") < fim && turno.hora_fim.strftime("%H:%M") > inicio
-    end
+    outro = turno_sobreposto
     errors.add(:base, :sobreposicao, turno: nome, outro: outro.nome) if outro
+  end
+
+  def turno_sobreposto
+    TipoRefeicao.where.not(id: id).em_ordem.detect { |turno| sobrepoe?(turno) }
+  end
+
+  def sobrepoe?(turno)
+    turno.hora_inicio_formatada < hora_fim_formatada && turno.hora_fim_formatada > hora_inicio_formatada
   end
 end
