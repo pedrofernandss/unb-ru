@@ -56,10 +56,11 @@ class InscricaoFastpass < ApplicationRecord
   # envios simultâneos em janelas diferentes do mesmo turno ainda passariam.
   def uma_por_turno_no_dia
     turno = time_frame.tipo_refeicao
-    outras = InscricaoFastpass.joins(:time_frame)
-                              .where(aluno: aluno, data: data, time_frames: { tipo_refeicao_id: turno.id })
-                              .where.not(id: id)
+    errors.add(:base, :ja_inscrito_no_turno, turno: turno.nome) if outras_inscricoes_no_turno(turno).exists?
+  end
 
-    errors.add(:base, :ja_inscrito_no_turno, turno: turno.nome) if outras.exists?
+  def outras_inscricoes_no_turno(turno)
+    InscricaoFastpass.joins(:time_frame).where(aluno: aluno, data: data, time_frames: { tipo_refeicao_id: turno.id })
+                     .where.not(id: id)
   end
 end
