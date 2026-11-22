@@ -80,11 +80,20 @@ class RelatorioGlobal
     return HistoricoCatraca.none if invalid?
 
     consulta = HistoricoCatraca.joins(:catraca).includes(:aluno, catraca: :restaurante)
+    filtrar_por_periodo(filtrar_por_local(consulta)).order(data_hora: :desc, id: :desc)
+  end
+
+  def filtrar_por_local(consulta)
     consulta = consulta.where(catracas: { restaurante_id: restaurante_id }) if restaurante_id
     consulta = consulta.where(catraca_id: catraca_id) if catraca_id
+    consulta
+  end
+
+  # Datas inclusivas: do começo do dia inicial ao fim do dia final.
+  def filtrar_por_periodo(consulta)
     consulta = consulta.where(data_hora: data_inicial.beginning_of_day..) if data_inicial
     consulta = consulta.where(data_hora: ..data_final.end_of_day) if data_final
-    consulta.order(data_hora: :desc, id: :desc)
+    consulta
   end
 
   def periodo_em_ordem
