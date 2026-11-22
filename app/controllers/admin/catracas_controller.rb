@@ -43,13 +43,17 @@ module Admin
     # Recebe o estado desejado, e não um "inverter": clique duplo ou reenvio não desfazem a ação.
     def disponibilidade
       catraca = Catraca.find(params[:id])
-      catraca.update!(online: ActiveModel::Type::Boolean.new.cast(params.require(:online)))
-
-      estado = catraca.online? ? "online" : "offline"
-      redirect_to admin_restaurantes_path, notice: "#{catraca.identificacao} do #{catraca.restaurante.nome} está #{estado}"
+      catraca.update!(online: online_desejado)
+      redirect_to admin_restaurantes_path, notice: aviso_de_disponibilidade(catraca)
     end
 
     private
+
+    def online_desejado = ActiveModel::Type::Boolean.new.cast(params.require(:online))
+
+    def aviso_de_disponibilidade(catraca)
+      "#{catraca.identificacao} do #{catraca.restaurante.nome} está #{catraca.online? ? 'online' : 'offline'}"
+    end
 
     def catraca_params
       params.expect(catraca: [ :restaurante_id, :numero, :piso, :online ])
