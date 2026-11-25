@@ -62,6 +62,19 @@ RSpec.describe "Inscrição no FastPass", type: :request do
     expect(flash[:alert]).to eq("Você já possui uma inscrição para o Almoço. Cancele a atual para alterar o horário.")
   end
 
+  # Dois envios ao mesmo tempo passam os dois pela validação; quem barra o segundo é o índice único.
+  it "trata como inscrição repetida a duplicata barrada só pelo índice único" do
+    entrar_como aluno
+    aluno.inscricoes_fastpass.create!(time_frame: janela, data: Date.current)
+    allow_any_instance_of(InscricaoFastpass).to receive(:uma_por_turno_no_dia)
+
+    expect { travel_to(hoje_as(9, 30)) { post fastpass_inscricoes_path, params: { time_frame_id: janela.id } } }
+      .not_to change(InscricaoFastpass, :count)
+
+    expect(response).to redirect_to(fastpass_path)
+    expect(flash[:alert]).to eq("Você já possui uma inscrição para o Almoço. Cancele a atual para alterar o horário.")
+  end
+
   it "não inscreve na última hora antes do turno, quando o resultado já saiu" do
     entrar_como aluno
 
