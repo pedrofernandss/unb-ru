@@ -1,3 +1,15 @@
+# Cobertura dos testes RSpec (Sprint 3). Precisa vir antes de carregar o app:
+# o SimpleCov só enxerga as linhas executadas depois de iniciado.
+require "simplecov"
+SimpleCov.formatters = [ SimpleCov::Formatter::HTMLFormatter, SimpleCov::Formatter::JSONFormatter ]
+SimpleCov.start "rails" do
+  skip %r{\A(spec|test|features|config|db)/}
+  group "Models", "app/models"
+  group "Controllers", "app/controllers"
+  group "Services", "app/services"
+  group "Helpers", "app/helpers"
+end
+
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 abort("RSpec não pode executar em produção") if Rails.env.production?

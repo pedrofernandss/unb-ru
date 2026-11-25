@@ -74,6 +74,8 @@ group :development do
 end
 
 group :test do
+  # Cobertura dos testes RSpec (Sprint 3). Iniciada no topo de spec/rails_helper.rb.
+  gem "simplecov", require: false
   gem "pdf-reader", "~> 2.15", require: "pdf/reader"
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
