@@ -106,5 +106,11 @@ RSpec.describe TipoRefeicao, type: :model do
       expect(cafe.hora_inicio_formatada).to eq("07:00")
       expect(cafe.hora_fim_formatada).to eq("09:30")
     end
+
+    it "retorna texto vazio para turno ainda sem horário" do
+      turno = described_class.new(nome: "Lanche")
+      expect(turno.hora_inicio_formatada).to eq("")
+      expect(turno.hora_fim_formatada).to eq("")
+    end
   end
 end
