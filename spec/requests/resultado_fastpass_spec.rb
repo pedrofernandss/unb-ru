@@ -50,4 +50,25 @@ RSpec.describe "Resultado do sorteio do FastPass", type: :request do
     assert_select ".secao-turno", text: /As inscrições para o Almoço de hoje já foram encerradas/
     assert_select "button", text: "Confirmar Inscrição", count: 0
   end
+
+  # Dois envios simultâneos em janelas diferentes do mesmo turno passam pela validação
+  # (ver InscricaoFastpass). A página mostra uma inscrição só e avisa no log.
+  it "registra no log quando o aluno tem duas inscrições no mesmo turno" do
+    outra_janela = almoco.time_frames.create!(inicio: "12:15", fim: "12:30")
+    aluno.inscricoes_fastpass.new(time_frame: outra_janela, data: Date.current).save!(validate: false)
+    allow(Rails.logger).to receive(:warn)
+
+    travel_to(hoje_as(10, 30)) { get fastpass_path }
+
+    expect(response).to have_http_status(:ok)
+    expect(Rails.logger).to have_received(:warn).with(/aluno #{aluno.id} tem mais de uma inscrição no mesmo turno/)
+  end
+
+  it "não registra aviso no log com uma inscrição por turno" do
+    allow(Rails.logger).to receive(:warn)
+
+    travel_to(hoje_as(10, 30)) { get fastpass_path }
+
+    expect(Rails.logger).not_to have_received(:warn).with(/mais de uma inscrição/)
+  end
 end

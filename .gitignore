@@ -36,3 +36,6 @@
 
 # Ignore IDE files.
 /.idea/
+
+# Relatório do SimpleCov, gerado a cada execução do RSpec.
+/coverage/

@@ -1,3 +1,17 @@
+# Cobertura dos testes RSpec (Sprint 3). Precisa vir antes de carregar o app:
+# o SimpleCov só enxerga as linhas executadas depois de iniciado.
+require "simplecov"
+SimpleCov.formatters = [ SimpleCov::Formatter::HTMLFormatter, SimpleCov::Formatter::JSONFormatter ]
+# O perfil "rails" já ignora spec/, test/, features/, config/ e db/ e cria os grupos
+# Models, Controllers e Helpers.
+SimpleCov.start "rails" do
+  # Só as classes base geradas pelo Rails; o app não tem jobs nem e-mails.
+  skip %r{\Aapp/(jobs|mailers)/}
+  group "Services", "app/services"
+  # No CI, a suíte falha se algum arquivo ficar abaixo de 90%.
+  coverage(:line) { minimum 90, per: :file } if ENV["CI"]
+end
+
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 abort("RSpec não pode executar em produção") if Rails.env.production?
