@@ -4,6 +4,8 @@ require "simplecov"
 SimpleCov.formatters = [ SimpleCov::Formatter::HTMLFormatter, SimpleCov::Formatter::JSONFormatter ]
 SimpleCov.start "rails" do
   skip %r{\A(spec|test|features|config|db)/}
+  # Só as classes base geradas pelo Rails; o app não tem jobs nem e-mails.
+  skip %r{\Aapp/(jobs|mailers)/}
   group "Models", "app/models"
   group "Controllers", "app/controllers"
   group "Services", "app/services"
