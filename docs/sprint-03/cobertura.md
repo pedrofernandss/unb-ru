@@ -2,7 +2,7 @@
 
 **Requisito:** cobertura dos testes RSpec acima de 90% em cada controller e model implementado pelo grupo, medida com o SimpleCov.
 
-**Resultado:** todos os models, controllers e services ficaram acima de 90%. O menor é o `admin/restaurantes_controller.rb`, com 92,3%. A cobertura total de `app/` passou de **91,87%** para **98,39%**.
+**Resultado:** todos os models, controllers, services e helpers ficaram acima de 90%. O menor é o `admin/restaurantes_controller.rb`, com 92,3%. A cobertura total de `app/` passou de **91,87%** para **99,33%**.
 
 ## Como medir
 
@@ -12,13 +12,27 @@ bundle exec rspec
 
 Ao final, o SimpleCov grava o relatório em `coverage/index.html` (linha por linha, com abas Models, Controllers, Services e Helpers) e em `coverage/coverage.json`. A pasta `coverage/` não vai para o repositório.
 
-A configuração fica no topo de `spec/rails_helper.rb`, antes de o app ser carregado. A medição é só do RSpec: Minitest e Cucumber não entram na conta.
+A configuração fica no topo de `spec/rails_helper.rb`, antes de o app ser carregado.
+- **Perfil `rails`:** já ignora `spec/`, `test/`, `features/`, `config/` e `db/`.
+- **Grupo Services:** foi o único adicionado.
+- **`app/jobs` e `app/mailers`:** ficam fora do relatório, porque só têm as classes base que o Rails gera.
+- **Minitest e Cucumber:** não entram na conta; a medição é só do RSpec.
+
+No CI (quando a variável `CI` existe, como no GitHub Actions), a suíte falha se algum arquivo ficar abaixo de 90%:
+
+```
+CI=1 bundle exec rspec
+# Line coverage by file (87.50%) is below the expected minimum coverage (90.00%) in app/models/transacao.rb.
+# SimpleCov failed with exit 2 due to a coverage related error
+```
+
+(Saída de um teste da trava, rodando a suíte sem o `transacao_spec.rb`.)
 
 ## Antes e depois
 
 Os valores são de cobertura de linhas.
-- **Antes:** a `sprint-03` em `f7dfed0`, com 196 exemplos.
-- **Depois:** esta branch, com 234 exemplos.
+- **Antes:** a `sprint-03` em `f7dfed0`, com 196 exemplos. O total de antes ainda contava `app/jobs` e `app/mailers`, que tinham 4 linhas sem teste.
+- **Depois:** esta branch, com 242 exemplos.
 
 ### Models
 
@@ -81,6 +95,16 @@ Os valores são de cobertura de linhas.
 | `regra_fastpass.rb` | 100,0% (28/28) | 100,0% (28/28) |
 | `relatorio_global_pdf.rb` | 100,0% (45/45) | 100,0% (45/45) |
 
+### Helpers
+
+| Arquivo | Antes | Depois |
+|---|---:|---:|
+| `turnos_helper.rb` | **38,5% (5/13)** | 100,0% (13/13) |
+| `extratos_helper.rb` | **68,8% (11/16)** | 100,0% (16/16) |
+| `fastpass_helper.rb` | **83,3% (5/6)** | 100,0% (6/6) |
+| `admin/relatorios_helper.rb` | 100,0% (8/8) | 100,0% (8/8) |
+| `application_helper.rb` | 100,0% (6/6) | 100,0% (6/6) |
+
 Em negrito estão os arquivos que começaram abaixo de 90%.
 
 ## O que foi feito
@@ -89,14 +113,16 @@ Cada spec novo tem caminho feliz e caminho triste. Nenhum `.feature` foi alterad
 
 | Arquivo | Spec | O que cobre |
 |---|---|---|
-| `admin/turnos_controller.rb` | `spec/requests/admin_turnos_spec.rb` (novo) | Lista, edição e atualização de horários (sobreposição, fim antes do início, 404), geração de time-frames (granularidade inválida ou que não divide o turno), avisos de descarte e de reconfiguração, bloqueio para aluno, funcionário e visitante. Antes só era testado pelo Cucumber. |
+| `admin/turnos_controller.rb` e `turnos_helper.rb` | `spec/requests/admin_turnos_spec.rb` (novo) | Lista, edição e atualização de horários (sobreposição, fim antes do início, 404), geração de time-frames (granularidade inválida ou que não divide o turno), avisos de descarte e de reconfiguração, bloqueio para aluno, funcionário e visitante. Antes só era testado pelo Cucumber. |
+| `extratos_helper.rb` | `spec/helpers/extratos_helper_spec.rb` (novo) | Valor com sinal, "Hoje", "Ontem" e dia da semana, e as etiquetas de almoço, jantar, café, recarga e neutra. |
+| `fastpass_helper.rb` | `spec/helpers/fastpass_helper_spec.rb` (novo) | Mensagem de cada status do sorteio e o erro para status sem mensagem. |
 | `estudante/inscricoes_fastpass_controller.rb` | `spec/requests/inscricoes_fastpass_spec.rb` | Inscrição duplicada barrada só pelo índice único do banco (dois envios simultâneos). |
 | `estudante/fastpass_controller.rb` | `spec/requests/resultado_fastpass_spec.rb` | Aviso no log quando o aluno tem duas inscrições no mesmo turno, e ausência do aviso no caso normal. |
 | `tipo_refeicao.rb` | `spec/models/tipo_refeicao_spec.rb` | Horário formatado de um turno ainda sem horário. |
 | `sessions_controller.rb` | `spec/requests/autenticacao_spec.rb` | Formulário, login por perfil, retorno à página pedida, senha ou matrícula inválida, logout, quem já está logado e o atalho que só aparece em desenvolvimento. |
 | `users_controller.rb` | `spec/requests/cadastro_spec.rb` (novo) | Formulário, cadastro, senhas diferentes e matrícula repetida. |
 | `transacao.rb` | `spec/models/transacao_spec.rb` (novo) | Local e detalhe no extrato (catraca, restaurante, recarga) e validações. |
-| `cartao.rb` | `spec/models/cartao_spec.rb` (novo) | Campos obrigatórios, número único por aluno e saldo negativo. |
+| `cartao.rb` | `spec/models/cartao_spec.rb` (novo) | Campos obrigatórios, número único por aluno e saldo negativo. Nenhuma tela usa o model ainda, mas ele fica: o cartão é uma entidade do modelo ER do projeto (seção 6 de `docs/entity-relationship-model.md`). |
 | `paginas_controller.rb` | — | Removido: era a página provisória "em construção" da Sprint 1. Desde o #5 e o #8 não tinha rota, e nenhum link, redirect ou teste chegava nele. |
 
 Os arquivos que já estavam acima de 90% e não chegaram a 100% ficaram como estavam:
@@ -110,7 +136,7 @@ Os arquivos que já estavam acima de 90% e não chegaram a 100% ficaram como est
 
 | Suíte | Antes | Depois |
 |---|---:|---:|
-| RSpec | 196 exemplos, 0 falhas | 234 exemplos, 0 falhas |
+| RSpec | 196 exemplos, 0 falhas | 242 exemplos, 0 falhas |
 | Minitest | 10 testes, 0 falhas | 10 testes, 0 falhas |
 | Cucumber | 66 cenários, 66 passando | 66 cenários, 66 passando |
-| RuboCop | — | 154 arquivos, nenhuma ofensa |
+| RuboCop | — | 156 arquivos, nenhuma ofensa |
