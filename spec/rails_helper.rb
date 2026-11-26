@@ -2,14 +2,14 @@
 # o SimpleCov só enxerga as linhas executadas depois de iniciado.
 require "simplecov"
 SimpleCov.formatters = [ SimpleCov::Formatter::HTMLFormatter, SimpleCov::Formatter::JSONFormatter ]
+# O perfil "rails" já ignora spec/, test/, features/, config/ e db/ e cria os grupos
+# Models, Controllers e Helpers.
 SimpleCov.start "rails" do
-  skip %r{\A(spec|test|features|config|db)/}
   # Só as classes base geradas pelo Rails; o app não tem jobs nem e-mails.
   skip %r{\Aapp/(jobs|mailers)/}
-  group "Models", "app/models"
-  group "Controllers", "app/controllers"
   group "Services", "app/services"
-  group "Helpers", "app/helpers"
+  # No CI, a suíte falha se algum arquivo ficar abaixo de 90%.
+  coverage(:line) { minimum 90, per: :file } if ENV["CI"]
 end
 
 ENV["RAILS_ENV"] ||= "test"
